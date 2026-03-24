@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uncertainty Visualization Study</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif;
+         max-width: 720px; margin: 40px auto; padding: 0 20px;
+         color: #222; line-height: 1.55; }
+  h1 { font-size: 1.5em; margin-bottom: .6em; }
+  h2 { font-size: 1.15em; margin: 1.4em 0 .5em; }
+  p, label { font-size: 0.95em; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .btn { background: #2a6496; color: #fff; border: none; padding: 10px 28px;
+         border-radius: 4px; font-size: 0.95em; cursor: pointer;
+         margin-top: 18px; }
+  .btn:hover { background: #1d4e75; }
+  .choices label { display: block; padding: 6px 0; cursor: pointer; }
+  .choices input { margin-right: 8px; }
+  .likert { display: flex; gap: 18px; margin: 8px 0; }
+  .likert label { font-size: 0.88em; text-align: center; }
+  input[type="number"] { width: 100px; padding: 6px; font-size: 1em; }
+  .stimulus { max-width: 100%; border: 1px solid #ccc; margin: 12px 0; }
+  #results-box { white-space: pre-wrap; background: #f5f5f5; padding: 12px;
+                 font-size: 0.82em; border: 1px solid #ddd; margin-top: 12px;
+                 max-height: 340px; overflow-y: auto; }
+  .note { font-size: 0.82em; color: #666; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 0: Consent -->
+<div class="page active" id="p-consent">
+  <h1>Uncertainty Visualization Study</h1>
+  <p>You are invited to participate in a short research study about how
+     people read charts. The study takes about 10 minutes.</p>
+  <p style="margin-top:8px">You will view several charts showing penguin
+     measurements and answer questions about them. Your responses are
+     anonymous and no personally identifiable information is collected.
+     Participation is voluntary and you may stop at any time.</p>
+  <button class="btn" onclick="startStudy()">I agree &mdash; start</button>
+</div>
+
+<!-- PAGE 1: Demographics -->
+<div class="page" id="p-demo">
+  <h2>About you</h2>
+  <label>Age range:
+    <select id="age">
+      <option value="">--</option>
+      <option>18-24</option><option>25-34</option>
+      <option>35-44</option><option>45+</option>
+    </select>
+  </label><br><br>
+  <label>Major / field: <input type="text" id="major" size="25"></label><br><br>
+  <label>Self-rated data literacy (1 = novice, 5 = expert):
+    <select id="literacy">
+      <option value="">--</option>
+      <option>1</option><option>2</option><option>3</option>
+      <option>4</option><option>5</option>
+    </select>
+  </label><br>
+  <button class="btn" onclick="nextTrial()">Next</button>
+</div>
+
+<!-- PAGE 2: Trial (reused for all 9 trials) -->
+<div class="page" id="p-trial">
+  <h2 id="trial-heading">Trial 1 / 9</h2>
+  <img id="trial-img" class="stimulus" src="" alt="chart stimulus">
+  <p id="trial-question"></p>
+  <div id="trial-choices" class="choices"></div>
+  <div id="trial-number" style="display:none">
+    <label>Your answer: <input type="number" id="trial-num-input" step="0.1"></label>
+  </div>
+  <h2>How confident are you?</h2>
+  <div class="likert">
+    <label><input type="radio" name="conf" value="1"> 1<br>Not at all</label>
+    <label><input type="radio" name="conf" value="2"> 2</label>
+    <label><input type="radio" name="conf" value="3"> 3</label>
+    <label><input type="radio" name="conf" value="4"> 4</label>
+    <label><input type="radio" name="conf" value="5"> 5<br>Very</label>
+  </div>
+  <button class="btn" onclick="submitTrial()">Submit</button>
+</div>
+
+<!-- PAGE 3: Open-ended -->
+<div class="page" id="p-feedback">
+  <h2>Almost done!</h2>
+  <p>Any comments or observations about the charts? (optional)</p>
+  <textarea id="fb-text" rows="4" style="width:100%;font-size:0.95em"></textarea>
+  <button class="btn" onclick="finish()">Finish</button>
+</div>
+
+<!-- PAGE 4: Thank you / results -->
+<div class="page" id="p-done">
+  <h1>Thank you!</h1>
+  <p>Your responses have been recorded.</p>
+  <p class="note">Researcher view — collected data:</p>
+  <div id="results-box"></div>
+</div>
+
+<script>
+var ENCODINGS = ["errorbar", "violin_box", "hops_grid"];
+var ENC_LABELS = { errorbar: "Error Bars", violin_box: "Violin + Box",
+                   hops_grid: "HOPs Grid" };
+var TASKS = [
+  { type: "ranking", q: "Which species has the <b>largest</b> mean bill length?",
+    opts: ["Adelie","Chinstrap","Gentoo"], correct: "Gentoo" },
+  { type: "estimation",
+    q: "Estimate the mean bill length for <b>Chinstrap</b> penguins (mm).",
+    correct: 48.8 },
+  { type: "decision",
+    q: "A researcher claims Gentoo and Chinstrap have the <b>same</b> mean bill length. Do you agree or disagree?",
+    opts: ["Agree","Disagree"], correct: "Disagree" }
+];
+
+var order, trialIdx, results, trialStart;
+
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function startStudy() {
+  show("p-demo");
+}
+
+function show(id) {
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+function nextTrial() {
+  if (typeof trialIdx === "undefined") {
+    order = shuffle(ENCODINGS.slice());
+    trialIdx = 0;
+    results = {
+      demographics: {
+        age: document.getElementById("age").value,
+        major: document.getElementById("major").value,
+        literacy: document.getElementById("literacy").value
+      },
+      encoding_order: order.slice(),
+      trials: []
+    };
+  }
+  if (trialIdx >= order.length * TASKS.length) {
+    show("p-feedback");
+    return;
+  }
+  loadTrial();
+  show("p-trial");
+}
+
+function loadTrial() {
+  var encIdx = Math.floor(trialIdx / TASKS.length);
+  var taskIdx = trialIdx % TASKS.length;
+  var enc = order[encIdx];
+  var task = TASKS[taskIdx];
+
+  document.getElementById("trial-heading").textContent =
+      "Trial " + (trialIdx+1) + " / " + (order.length * TASKS.length) +
+      "  (" + ENC_LABELS[enc] + ")";
+  document.getElementById("trial-img").src = "figures/" + enc + ".png";
+  document.getElementById("trial-question").innerHTML = task.q;
+
+  var choicesDiv = document.getElementById("trial-choices");
+  var numDiv = document.getElementById("trial-number");
+  choicesDiv.innerHTML = "";
+  numDiv.style.display = "none";
+
+  if (task.opts) {
+    task.opts.forEach(function(o){
+      var lbl = document.createElement("label");
+      lbl.innerHTML = '<input type="radio" name="ans" value="'+o+'"> ' + o;
+      choicesDiv.appendChild(lbl);
+    });
+  } else {
+    numDiv.style.display = "block";
+    document.getElementById("trial-num-input").value = "";
+  }
+
+  document.querySelectorAll('input[name="conf"]').forEach(function(r){r.checked=false});
+  trialStart = performance.now();
+}
+
+function submitTrial() {
+  var encIdx = Math.floor(trialIdx / TASKS.length);
+  var taskIdx = trialIdx % TASKS.length;
+  var task = TASKS[taskIdx];
+
+  var answer;
+  if (task.opts) {
+    var checked = document.querySelector('input[name="ans"]:checked');
+    answer = checked ? checked.value : null;
+  } else {
+    answer = parseFloat(document.getElementById("trial-num-input").value);
+  }
+  var confEl = document.querySelector('input[name="conf"]:checked');
+  var conf = confEl ? parseInt(confEl.value) : null;
+  var elapsed = Math.round(performance.now() - trialStart);
+
+  results.trials.push({
+    trial: trialIdx + 1,
+    encoding: order[encIdx],
+    task_type: task.type,
+    answer: answer,
+    confidence: conf,
+    time_ms: elapsed
+  });
+
+  trialIdx++;
+  nextTrial();
+}
+
+function finish() {
+  results.feedback = document.getElementById("fb-text").value;
+  document.getElementById("results-box").textContent = JSON.stringify(results, null, 2);
+  show("p-done");
+}
+</script>
+</body>
+</html>
