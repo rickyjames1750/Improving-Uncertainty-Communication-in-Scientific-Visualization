@@ -102,9 +102,9 @@ def make_violin_chart(data):
 
 
 def make_hops_grid(data, n_draws=20):
-    """Static HOPs: grid of bootstrap sample means."""
+    """Static HOPs: grid of bootstrap sample means as dot plots."""
     random.seed(SEED)
-    fig, axes = plt.subplots(4, 5, figsize=(12, 8), sharex=True, sharey=True)
+    fig, axes = plt.subplots(4, 5, figsize=(14, 9), sharex=True, sharey=True)
     axes_flat = axes.flatten()
 
     for idx in range(n_draws):
@@ -116,20 +116,24 @@ def make_hops_grid(data, n_draws=20):
             sample = [random.choice(vals) for _ in range(len(vals))]
             boot_means.append(sum(sample) / len(sample))
 
-        ax.bar(xs, boot_means, width=0.6,
-               color=[COLORS[sp] for sp in SPECIES_ORDER],
-               edgecolor="black", linewidth=0.4, alpha=0.8)
-        ax.set_ylim(35, 55)
-        ax.set_xticks(xs)
+        for i, (x, m) in enumerate(zip(xs, boot_means)):
+            ax.plot(x, m, "o", color=COLORS[SPECIES_ORDER[i]],
+                    markersize=10, markeredgecolor="black", markeredgewidth=0.6)
+            ax.vlines(x, 37, m, color=COLORS[SPECIES_ORDER[i]],
+                      linewidth=1.5, alpha=0.5)
+        ax.set_ylim(37, 52)
+        ax.set_xticks(list(xs))
         if idx >= 15:
-            ax.set_xticklabels([s[:3] for s in SPECIES_ORDER], fontsize=7)
+            ax.set_xticklabels([s[:3] for s in SPECIES_ORDER], fontsize=8)
         else:
             ax.set_xticklabels([])
-        ax.tick_params(axis="y", labelsize=6)
-        ax.set_title(f"Draw {idx+1}", fontsize=7, pad=2)
+        ax.tick_params(axis="y", labelsize=7)
+        ax.set_title(f"Draw {idx+1}", fontsize=8, pad=3)
+        ax.yaxis.grid(True, alpha=0.2)
 
-    fig.suptitle("HOPs: 20 Bootstrap Draws of Mean Bill Length", fontsize=13)
-    fig.text(0.04, 0.5, "Bill length (mm)", va="center", rotation="vertical")
+    fig.suptitle("HOPs: 20 Bootstrap Draws of Mean Bill Length", fontsize=14)
+    fig.text(0.03, 0.5, "Bill length (mm)", va="center", rotation="vertical",
+             fontsize=11)
     fig.tight_layout(rect=[0.05, 0, 1, 0.95])
     fig.savefig(os.path.join(OUT_DIR, "hops_grid.png"), dpi=150)
     plt.close(fig)
