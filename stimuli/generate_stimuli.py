@@ -101,10 +101,14 @@ def make_violin_chart(data):
     print("  wrote violin_box.png")
 
 
-def make_hops_grid(data, n_draws=20):
-    """Static HOPs: grid of bootstrap sample means as dot plots."""
+def make_hops_grid(data, n_draws=12):
+    """Static HOPs: 3x4 grid of bootstrap sample means as dot plots.
+
+    Reduced from 20 to 12 panels after pilot feedback — participants found
+    the 4x5 layout overwhelming and the smaller panels hard to read.
+    """
     random.seed(SEED)
-    fig, axes = plt.subplots(4, 5, figsize=(14, 9), sharex=True, sharey=True)
+    fig, axes = plt.subplots(3, 4, figsize=(13, 9), sharex=True, sharey=True)
     axes_flat = axes.flatten()
 
     for idx in range(n_draws):
@@ -118,23 +122,26 @@ def make_hops_grid(data, n_draws=20):
 
         for i, (x, m) in enumerate(zip(xs, boot_means)):
             ax.plot(x, m, "o", color=COLORS[SPECIES_ORDER[i]],
-                    markersize=10, markeredgecolor="black", markeredgewidth=0.6)
+                    markersize=12, markeredgecolor="black", markeredgewidth=0.7)
             ax.vlines(x, 37, m, color=COLORS[SPECIES_ORDER[i]],
-                      linewidth=1.5, alpha=0.5)
+                      linewidth=1.8, alpha=0.5)
         ax.set_ylim(37, 52)
         ax.set_xticks(list(xs))
-        if idx >= 15:
-            ax.set_xticklabels([s[:3] for s in SPECIES_ORDER], fontsize=8)
+        if idx >= 8:
+            ax.set_xticklabels([s[:3] for s in SPECIES_ORDER], fontsize=10)
         else:
             ax.set_xticklabels([])
-        ax.tick_params(axis="y", labelsize=7)
-        ax.set_title(f"Draw {idx+1}", fontsize=8, pad=3)
+        ax.tick_params(axis="y", labelsize=10)
+        ax.set_title(f"Draw {idx+1}", fontsize=10, pad=4)
         ax.yaxis.grid(True, alpha=0.2)
 
-    fig.suptitle("HOPs: 20 Bootstrap Draws of Mean Bill Length", fontsize=14)
+    fig.suptitle("HOPs: 12 Bootstrap Draws of Mean Bill Length", fontsize=14)
     fig.text(0.03, 0.5, "Bill length (mm)", va="center", rotation="vertical",
              fontsize=11)
-    fig.tight_layout(rect=[0.05, 0, 1, 0.95])
+    fig.text(0.5, 0.01,
+             "Each panel shows one plausible outcome from resampling the data.",
+             ha="center", fontsize=10, style="italic", color="#555")
+    fig.tight_layout(rect=[0.05, 0.04, 1, 0.95])
     fig.savefig(os.path.join(OUT_DIR, "hops_grid.png"), dpi=150)
     plt.close(fig)
     print("  wrote hops_grid.png")
