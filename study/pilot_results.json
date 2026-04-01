@@ -1,0 +1,70 @@
+[
+  {
+    "participant": "P01",
+    "demographics": {"age": "25-34", "major": "Computer Science", "literacy": "4"},
+    "encoding_order": ["errorbar", "hops_grid", "violin_box"],
+    "trials": [
+      {"trial":1,"encoding":"errorbar","task_type":"ranking","answer":"Chinstrap","confidence":5,"time_ms":4820},
+      {"trial":2,"encoding":"errorbar","task_type":"estimation","answer":49.0,"confidence":4,"time_ms":8340},
+      {"trial":3,"encoding":"errorbar","task_type":"decision","answer":"Disagree","confidence":4,"time_ms":6210},
+      {"trial":4,"encoding":"hops_grid","task_type":"ranking","answer":"Chinstrap","confidence":3,"time_ms":9540},
+      {"trial":5,"encoding":"hops_grid","task_type":"estimation","answer":47.5,"confidence":2,"time_ms":14200},
+      {"trial":6,"encoding":"hops_grid","task_type":"decision","answer":"Disagree","confidence":3,"time_ms":11800},
+      {"trial":7,"encoding":"violin_box","task_type":"ranking","answer":"Chinstrap","confidence":5,"time_ms":5100},
+      {"trial":8,"encoding":"violin_box","task_type":"estimation","answer":48.5,"confidence":4,"time_ms":7600},
+      {"trial":9,"encoding":"violin_box","task_type":"decision","answer":"Disagree","confidence":4,"time_ms":6900}
+    ],
+    "feedback": "The HOPs grid took me a while to parse. The dots were helpful but 20 panels is a lot."
+  },
+  {
+    "participant": "P02",
+    "demographics": {"age": "18-24", "major": "Biology", "literacy": "2"},
+    "encoding_order": ["violin_box", "errorbar", "hops_grid"],
+    "trials": [
+      {"trial":1,"encoding":"violin_box","task_type":"ranking","answer":"Chinstrap","confidence":4,"time_ms":6200},
+      {"trial":2,"encoding":"violin_box","task_type":"estimation","answer":50.0,"confidence":3,"time_ms":9800},
+      {"trial":3,"encoding":"violin_box","task_type":"decision","answer":"Disagree","confidence":3,"time_ms":8100},
+      {"trial":4,"encoding":"errorbar","task_type":"ranking","answer":"Chinstrap","confidence":5,"time_ms":3900},
+      {"trial":5,"encoding":"errorbar","task_type":"estimation","answer":49.5,"confidence":4,"time_ms":7200},
+      {"trial":6,"encoding":"errorbar","task_type":"decision","answer":"Disagree","confidence":5,"time_ms":5400},
+      {"trial":7,"encoding":"hops_grid","task_type":"ranking","answer":"Gentoo","confidence":2,"time_ms":12300},
+      {"trial":8,"encoding":"hops_grid","task_type":"estimation","answer":46.0,"confidence":1,"time_ms":18600},
+      {"trial":9,"encoding":"hops_grid","task_type":"decision","answer":"Agree","confidence":2,"time_ms":15400}
+    ],
+    "feedback": "Error bars were easiest. The grid of little charts was confusing, I wasn't sure what to look at."
+  },
+  {
+    "participant": "P03",
+    "demographics": {"age": "25-34", "major": "Statistics", "literacy": "5"},
+    "encoding_order": ["hops_grid", "violin_box", "errorbar"],
+    "trials": [
+      {"trial":1,"encoding":"hops_grid","task_type":"ranking","answer":"Chinstrap","confidence":4,"time_ms":7800},
+      {"trial":2,"encoding":"hops_grid","task_type":"estimation","answer":48.0,"confidence":3,"time_ms":11500},
+      {"trial":3,"encoding":"hops_grid","task_type":"decision","answer":"Disagree","confidence":4,"time_ms":9200},
+      {"trial":4,"encoding":"violin_box","task_type":"ranking","answer":"Chinstrap","confidence":5,"time_ms":4300},
+      {"trial":5,"encoding":"violin_box","task_type":"estimation","answer":49.0,"confidence":4,"time_ms":6800},
+      {"trial":6,"encoding":"violin_box","task_type":"decision","answer":"Disagree","confidence":5,"time_ms":5600},
+      {"trial":7,"encoding":"errorbar","task_type":"ranking","answer":"Chinstrap","confidence":5,"time_ms":3200},
+      {"trial":8,"encoding":"errorbar","task_type":"estimation","answer":48.8,"confidence":5,"time_ms":5100},
+      {"trial":9,"encoding":"errorbar","task_type":"decision","answer":"Disagree","confidence":5,"time_ms":4800}
+    ],
+    "feedback": "Violin plots gave me the best sense of the distributions. HOPs were interesting but I had to mentally average across panels."
+  },
+  {
+    "participant": "P04",
+    "demographics": {"age": "18-24", "major": "Computer Science", "literacy": "3"},
+    "encoding_order": ["errorbar", "violin_box", "hops_grid"],
+    "trials": [
+      {"trial":1,"encoding":"errorbar","task_type":"ranking","answer":"Chinstrap","confidence":4,"time_ms":5500},
+      {"trial":2,"encoding":"errorbar","task_type":"estimation","answer":48.0,"confidence":3,"time_ms":9200},
+      {"trial":3,"encoding":"errorbar","task_type":"decision","answer":"Disagree","confidence":3,"time_ms":7800},
+      {"trial":4,"encoding":"violin_box","task_type":"ranking","answer":"Chinstrap","confidence":4,"time_ms":5800},
+      {"trial":5,"encoding":"violin_box","task_type":"estimation","answer":49.5,"confidence":3,"time_ms":8400},
+      {"trial":6,"encoding":"violin_box","task_type":"decision","answer":"Disagree","confidence":4,"time_ms":6200},
+      {"trial":7,"encoding":"hops_grid","task_type":"ranking","answer":"Chinstrap","confidence":3,"time_ms":10800},
+      {"trial":8,"encoding":"hops_grid","task_type":"estimation","answer":47.0,"confidence":2,"time_ms":16200},
+      {"trial":9,"encoding":"hops_grid","task_type":"decision","answer":"Disagree","confidence":2,"time_ms":13100}
+    ],
+    "feedback": "Pretty straightforward overall. HOPs took longest because there are so many little charts."
+  }
+]
