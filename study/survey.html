@@ -18,6 +18,10 @@
          border-radius: 4px; font-size: 0.95em; cursor: pointer;
          margin-top: 18px; }
   .btn:hover { background: #1d4e75; }
+  .btn-sm { padding: 6px 16px; font-size: 0.85em; margin-top: 10px;
+            margin-right: 8px; }
+  .btn-green { background: #2e8b57; }
+  .btn-green:hover { background: #246b45; }
   .choices label { display: block; padding: 6px 0; cursor: pointer; }
   .choices input { margin-right: 8px; }
   .likert { display: flex; gap: 18px; margin: 8px 0; }
@@ -28,11 +32,13 @@
                  font-size: 0.82em; border: 1px solid #ddd; margin-top: 12px;
                  max-height: 340px; overflow-y: auto; }
   .note { font-size: 0.82em; color: #666; margin-top: 6px; }
+  .copied-msg { color: #2e8b57; font-size: 0.85em; display: none;
+                margin-left: 8px; }
+  #group-label { font-size: 0.82em; color: #888; margin-top: 4px; }
 </style>
 </head>
 <body>
 
-<!-- PAGE 0: Consent -->
 <div class="page active" id="p-consent">
   <h1>Uncertainty Visualization Study</h1>
   <p>You are invited to participate in a short research study about how
@@ -44,7 +50,6 @@
   <button class="btn" onclick="startStudy()">I agree &mdash; start</button>
 </div>
 
-<!-- PAGE 1: Demographics -->
 <div class="page" id="p-demo">
   <h2>About you</h2>
   <label>Age range:
@@ -65,7 +70,6 @@
   <button class="btn" onclick="nextTrial()">Next</button>
 </div>
 
-<!-- PAGE 2: Trial (reused for all 9 trials) -->
 <div class="page" id="p-trial">
   <h2 id="trial-heading">Trial 1 / 9</h2>
   <img id="trial-img" class="stimulus" src="" alt="chart stimulus">
@@ -85,7 +89,6 @@
   <button class="btn" onclick="submitTrial()">Submit</button>
 </div>
 
-<!-- PAGE 3: Open-ended -->
 <div class="page" id="p-feedback">
   <h2>Almost done!</h2>
   <p>Any comments or observations about the charts? (optional)</p>
@@ -93,11 +96,15 @@
   <button class="btn" onclick="finish()">Finish</button>
 </div>
 
-<!-- PAGE 4: Thank you / results -->
 <div class="page" id="p-done">
   <h1>Thank you!</h1>
   <p>Your responses have been recorded.</p>
-  <p class="note">Researcher view — collected data:</p>
+  <div id="group-label"></div>
+  <div style="margin-top:12px">
+    <button class="btn btn-sm btn-green" onclick="copyResults()">Copy to clipboard</button>
+    <button class="btn btn-sm" onclick="downloadResults()">Download JSON</button>
+    <span class="copied-msg" id="copied-msg">Copied!</span>
+  </div>
   <div id="results-box"></div>
 </div>
 
@@ -105,9 +112,29 @@
 var ENCODINGS = ["errorbar", "violin_box", "hops_grid"];
 var ENC_LABELS = { errorbar: "Error Bars", violin_box: "Violin + Box",
                    hops_grid: "HOPs Grid" };
+
+var LATIN_SQUARE = [
+  ["errorbar","violin_box","hops_grid"],
+  ["errorbar","hops_grid","violin_box"],
+  ["violin_box","errorbar","hops_grid"],
+  ["violin_box","hops_grid","errorbar"],
+  ["hops_grid","errorbar","violin_box"],
+  ["hops_grid","violin_box","errorbar"]
+];
+
+function orderToGroupKey(order) {
+  var joined = order.join(",");
+  for (var g = 0; g < LATIN_SQUARE.length; g++) {
+    if (LATIN_SQUARE[g].join(",") === joined) {
+      return String.fromCharCode(65 + g);
+    }
+  }
+  return "?";
+}
+
 var TASKS = [
   { type: "ranking", q: "Which species has the <b>largest</b> mean bill length?",
-    opts: ["Adelie","Chinstrap","Gentoo"], correct: "Gentoo" },
+    opts: ["Adelie","Chinstrap","Gentoo"], correct: "Chinstrap" },
   { type: "estimation",
     q: "Estimate the mean bill length for <b>Chinstrap</b> penguins (mm).",
     correct: 48.8 },
@@ -126,6 +153,10 @@ function shuffle(a) {
   return a;
 }
 
+function newSessionId() {
+  return "sess-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+}
+
 function startStudy() {
   show("p-demo");
 }
@@ -141,6 +172,8 @@ function nextTrial() {
     order = shuffle(ENCODINGS.slice());
     trialIdx = 0;
     results = {
+      participant: newSessionId(),
+      group: orderToGroupKey(order),
       demographics: {
         age: document.getElementById("age").value,
         major: document.getElementById("major").value,
@@ -221,8 +254,30 @@ function submitTrial() {
 
 function finish() {
   results.feedback = document.getElementById("fb-text").value;
-  document.getElementById("results-box").textContent = JSON.stringify(results, null, 2);
+  var json = JSON.stringify(results, null, 2);
+  document.getElementById("results-box").textContent = json;
+  document.getElementById("group-label").textContent =
+      "Session " + results.participant + " | Group " + results.group +
+      " | Order: " + results.encoding_order.join(" \u2192 ");
   show("p-done");
+}
+
+function copyResults() {
+  var text = document.getElementById("results-box").textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    var msg = document.getElementById("copied-msg");
+    msg.style.display = "inline";
+    setTimeout(function(){ msg.style.display = "none"; }, 2000);
+  });
+}
+
+function downloadResults() {
+  var text = document.getElementById("results-box").textContent;
+  var blob = new Blob([text], {type: "application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = results.participant + "_results.json";
+  a.click();
 }
 </script>
 </body>
