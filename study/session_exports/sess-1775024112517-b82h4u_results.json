@@ -1,0 +1,89 @@
+{
+  "participant": "sess-1775024112517-b82h4u",
+  "group": "D",
+  "demographics": {
+    "age": "35-44",
+    "major": "Nursing",
+    "literacy": "3"
+  },
+  "encoding_order": [
+    "violin_box",
+    "hops_grid",
+    "errorbar"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "encoding": "violin_box",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 102331
+    },
+    {
+      "trial": 2,
+      "encoding": "violin_box",
+      "task_type": "estimation",
+      "answer": 48,
+      "confidence": 3,
+      "time_ms": 43500
+    },
+    {
+      "trial": 3,
+      "encoding": "violin_box",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 35333
+    },
+    {
+      "trial": 4,
+      "encoding": "hops_grid",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 4,
+      "time_ms": 45467
+    },
+    {
+      "trial": 5,
+      "encoding": "hops_grid",
+      "task_type": "estimation",
+      "answer": 49.1,
+      "confidence": 3,
+      "time_ms": 38933
+    },
+    {
+      "trial": 6,
+      "encoding": "hops_grid",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 55565
+    },
+    {
+      "trial": 7,
+      "encoding": "errorbar",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 39900
+    },
+    {
+      "trial": 8,
+      "encoding": "errorbar",
+      "task_type": "estimation",
+      "answer": 49,
+      "confidence": 4,
+      "time_ms": 33768
+    },
+    {
+      "trial": 9,
+      "encoding": "errorbar",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 43733
+    }
+  ],
+  "feedback": ""
+}

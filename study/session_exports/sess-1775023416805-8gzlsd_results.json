@@ -1,0 +1,89 @@
+{
+  "participant": "sess-1775023416805-8gzlsd",
+  "group": "C",
+  "demographics": {
+    "age": "18-24",
+    "major": "Biological Sciences ",
+    "literacy": "5"
+  },
+  "encoding_order": [
+    "violin_box",
+    "errorbar",
+    "hops_grid"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "encoding": "violin_box",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 44069
+    },
+    {
+      "trial": 2,
+      "encoding": "violin_box",
+      "task_type": "estimation",
+      "answer": 49.4,
+      "confidence": 4,
+      "time_ms": 50565
+    },
+    {
+      "trial": 3,
+      "encoding": "violin_box",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 52698
+    },
+    {
+      "trial": 4,
+      "encoding": "errorbar",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 36267
+    },
+    {
+      "trial": 5,
+      "encoding": "errorbar",
+      "task_type": "estimation",
+      "answer": 49.2,
+      "confidence": 4,
+      "time_ms": 31533
+    },
+    {
+      "trial": 6,
+      "encoding": "errorbar",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 4,
+      "time_ms": 38501
+    },
+    {
+      "trial": 7,
+      "encoding": "hops_grid",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 55600
+    },
+    {
+      "trial": 8,
+      "encoding": "hops_grid",
+      "task_type": "estimation",
+      "answer": 49,
+      "confidence": 3,
+      "time_ms": 79265
+    },
+    {
+      "trial": 9,
+      "encoding": "hops_grid",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 5,
+      "time_ms": 43135
+    }
+  ],
+  "feedback": "20 something mini charts were alot but provided much needed context. "
+}

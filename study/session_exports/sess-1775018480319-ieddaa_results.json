@@ -1,0 +1,89 @@
+{
+  "participant": "sess-1775018480319-ieddaa",
+  "group": "E",
+  "demographics": {
+    "age": "18-24",
+    "major": "Biochemistry",
+    "literacy": "4"
+  },
+  "encoding_order": [
+    "hops_grid",
+    "errorbar",
+    "violin_box"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "encoding": "hops_grid",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 4,
+      "time_ms": 142165
+    },
+    {
+      "trial": 2,
+      "encoding": "hops_grid",
+      "task_type": "estimation",
+      "answer": 49,
+      "confidence": 4,
+      "time_ms": 235799
+    },
+    {
+      "trial": 3,
+      "encoding": "hops_grid",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 4,
+      "time_ms": 45866
+    },
+    {
+      "trial": 4,
+      "encoding": "errorbar",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 4,
+      "time_ms": 75099
+    },
+    {
+      "trial": 5,
+      "encoding": "errorbar",
+      "task_type": "estimation",
+      "answer": 48.7,
+      "confidence": 4,
+      "time_ms": 49333
+    },
+    {
+      "trial": 6,
+      "encoding": "errorbar",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 4,
+      "time_ms": 38200
+    },
+    {
+      "trial": 7,
+      "encoding": "violin_box",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 4,
+      "time_ms": 81499
+    },
+    {
+      "trial": 8,
+      "encoding": "violin_box",
+      "task_type": "estimation",
+      "answer": 49.5,
+      "confidence": 4,
+      "time_ms": 35899
+    },
+    {
+      "trial": 9,
+      "encoding": "violin_box",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 46733
+    }
+  ],
+  "feedback": "Error bar version was clearest."
+}

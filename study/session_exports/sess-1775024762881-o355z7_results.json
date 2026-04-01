@@ -1,0 +1,89 @@
+{
+  "participant": "sess-1775024762881-o355z7",
+  "group": "E",
+  "demographics": {
+    "age": "25-34",
+    "major": "Psychology",
+    "literacy": "3"
+  },
+  "encoding_order": [
+    "hops_grid",
+    "errorbar",
+    "violin_box"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "encoding": "hops_grid",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 4,
+      "time_ms": 50833
+    },
+    {
+      "trial": 2,
+      "encoding": "hops_grid",
+      "task_type": "estimation",
+      "answer": 49,
+      "confidence": 3,
+      "time_ms": 55794
+    },
+    {
+      "trial": 3,
+      "encoding": "hops_grid",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 4,
+      "time_ms": 90901
+    },
+    {
+      "trial": 4,
+      "encoding": "errorbar",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 4,
+      "time_ms": 42866
+    },
+    {
+      "trial": 5,
+      "encoding": "errorbar",
+      "task_type": "estimation",
+      "answer": 48.5,
+      "confidence": 4,
+      "time_ms": 36769
+    },
+    {
+      "trial": 6,
+      "encoding": "errorbar",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 42097
+    },
+    {
+      "trial": 7,
+      "encoding": "violin_box",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 3,
+      "time_ms": 36666
+    },
+    {
+      "trial": 8,
+      "encoding": "violin_box",
+      "task_type": "estimation",
+      "answer": 48.3,
+      "confidence": 3,
+      "time_ms": 37034
+    },
+    {
+      "trial": 9,
+      "encoding": "violin_box",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 37101
+    }
+  ],
+  "feedback": ""
+}

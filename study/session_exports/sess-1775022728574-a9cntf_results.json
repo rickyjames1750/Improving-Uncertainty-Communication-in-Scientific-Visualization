@@ -1,0 +1,89 @@
+{
+  "participant": "sess-1775022728574-a9cntf",
+  "group": "F",
+  "demographics": {
+    "age": "18-24",
+    "major": "Computer Science ",
+    "literacy": "4"
+  },
+  "encoding_order": [
+    "hops_grid",
+    "violin_box",
+    "errorbar"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "encoding": "hops_grid",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 3,
+      "time_ms": 43704
+    },
+    {
+      "trial": 2,
+      "encoding": "hops_grid",
+      "task_type": "estimation",
+      "answer": 49.1,
+      "confidence": 3,
+      "time_ms": 37196
+    },
+    {
+      "trial": 3,
+      "encoding": "hops_grid",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 4,
+      "time_ms": 35034
+    },
+    {
+      "trial": 4,
+      "encoding": "violin_box",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 31032
+    },
+    {
+      "trial": 5,
+      "encoding": "violin_box",
+      "task_type": "estimation",
+      "answer": 49.6,
+      "confidence": 3,
+      "time_ms": 34298
+    },
+    {
+      "trial": 6,
+      "encoding": "violin_box",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 3,
+      "time_ms": 33735
+    },
+    {
+      "trial": 7,
+      "encoding": "errorbar",
+      "task_type": "ranking",
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 33898
+    },
+    {
+      "trial": 8,
+      "encoding": "errorbar",
+      "task_type": "estimation",
+      "answer": 49.3,
+      "confidence": 3,
+      "time_ms": 32901
+    },
+    {
+      "trial": 9,
+      "encoding": "errorbar",
+      "task_type": "decision",
+      "answer": "Disagree",
+      "confidence": 4,
+      "time_ms": 34536
+    }
+  ],
+  "feedback": "Violin plots were my favorite and easiest. "
+}
