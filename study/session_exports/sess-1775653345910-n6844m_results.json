@@ -1,0 +1,111 @@
+{
+  "participant": "sess-1775653345910-n6844m",
+  "group": "D",
+  "demographics": {
+    "age": "18-24",
+    "major": "Bioengineering",
+    "literacy": "5"
+  },
+  "encoding_order": [
+    "violin_box",
+    "hops_grid",
+    "errorbar"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "encoding": "violin_box",
+      "task": "ranking",
+      "task_set": 1,
+      "answer": "Chinstrap",
+      "confidence": 5,
+      "time_ms": 22659
+    },
+    {
+      "trial": 2,
+      "encoding": "violin_box",
+      "task": "estimation",
+      "task_set": 1,
+      "answer": 48,
+      "confidence": 5,
+      "time_ms": 73496
+    },
+    {
+      "trial": 3,
+      "encoding": "violin_box",
+      "task": "decision",
+      "task_set": 1,
+      "answer": "Agree",
+      "confidence": 5,
+      "time_ms": 6860
+    },
+    {
+      "trial": 4,
+      "encoding": "hops_grid",
+      "task": "ranking",
+      "task_set": 2,
+      "answer": "Adelie",
+      "confidence": 5,
+      "time_ms": 13538
+    },
+    {
+      "trial": 5,
+      "encoding": "hops_grid",
+      "task": "estimation",
+      "task_set": 2,
+      "answer": 46.5,
+      "confidence": 4,
+      "time_ms": 20357
+    },
+    {
+      "trial": 6,
+      "encoding": "hops_grid",
+      "task": "decision",
+      "task_set": 2,
+      "answer": "Disagree",
+      "confidence": 5,
+      "time_ms": 6091
+    },
+    {
+      "trial": 7,
+      "encoding": "errorbar",
+      "task": "ranking",
+      "task_set": 3,
+      "answer": "Gentoo",
+      "confidence": 5,
+      "time_ms": 12836
+    },
+    {
+      "trial": 8,
+      "encoding": "errorbar",
+      "task": "estimation",
+      "task_set": 3,
+      "answer": 38,
+      "confidence": 5,
+      "time_ms": 7137
+    },
+    {
+      "trial": 9,
+      "encoding": "errorbar",
+      "task": "decision",
+      "task_set": 3,
+      "answer": "Agree",
+      "confidence": 5,
+      "time_ms": 17668
+    }
+  ],
+  "distractors": [
+    {
+      "between_blocks": 1,
+      "expected": 59,
+      "given": 59
+    },
+    {
+      "between_blocks": 2,
+      "expected": 53,
+      "given": 53
+    }
+  ],
+  "recognition": "No",
+  "feedback": ""
+}
