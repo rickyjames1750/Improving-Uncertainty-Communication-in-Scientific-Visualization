@@ -35,6 +35,9 @@
   .copied-msg { color: #2e8b57; font-size: 0.85em; display: none;
                 margin-left: 8px; }
   #group-label { font-size: 0.82em; color: #888; margin-top: 4px; }
+  .distractor-box { background: #fafafa; border: 1px solid #ddd;
+                    padding: 20px; border-radius: 6px; margin: 16px 0; }
+  .distractor-box p { font-size: 1.1em; margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -89,8 +92,25 @@
   <button class="btn" onclick="submitTrial()">Submit</button>
 </div>
 
+<div class="page" id="p-distractor">
+  <h2>Quick break</h2>
+  <p>Before the next set of charts, solve this quick problem:</p>
+  <div class="distractor-box">
+    <p id="distractor-q"></p>
+    <label>Your answer: <input type="number" id="distractor-input"></label>
+  </div>
+  <button class="btn" onclick="submitDistractor()">Continue</button>
+</div>
+
 <div class="page" id="p-feedback">
   <h2>Almost done!</h2>
+  <label>Did you feel you remembered specific answers from earlier charts
+    when answering later questions?
+    <select id="recognition">
+      <option value="">--</option>
+      <option>Yes</option><option>No</option><option>Not sure</option>
+    </select>
+  </label><br><br>
   <p>Any comments or observations about the charts? (optional)</p>
   <textarea id="fb-text" rows="4" style="width:100%;font-size:0.95em"></textarea>
   <button class="btn" onclick="finish()">Finish</button>
@@ -132,18 +152,52 @@ function orderToGroupKey(order) {
   return "?";
 }
 
-var TASKS = [
-  { type: "ranking", q: "Which species has the <b>largest</b> mean bill length?",
-    opts: ["Adelie","Chinstrap","Gentoo"], correct: "Chinstrap" },
-  { type: "estimation",
-    q: "Estimate the mean bill length for <b>Chinstrap</b> penguins (mm).",
-    correct: 48.8 },
-  { type: "decision",
-    q: "A researcher claims Gentoo and Chinstrap have the <b>same</b> mean bill length. Do you agree or disagree?",
-    opts: ["Agree","Disagree"], correct: "Disagree" }
+/* --- Three parallel task sets (one per block) ---
+   Structurally identical question types but different species/values
+   so prior answers don't carry over between blocks. */
+var TASK_SETS = [
+  [
+    { type: "ranking",
+      q: "Which species has the <b>largest</b> mean bill length?",
+      opts: ["Adelie","Chinstrap","Gentoo"], correct: "Chinstrap" },
+    { type: "estimation",
+      q: "Estimate the mean bill length for <b>Chinstrap</b> penguins (mm).",
+      correct: 48.8 },
+    { type: "decision",
+      q: "A researcher claims Gentoo and Chinstrap have the <b>same</b> mean bill length. Do you agree or disagree?",
+      opts: ["Agree","Disagree"], correct: "Disagree" }
+  ],
+  [
+    { type: "ranking",
+      q: "Which species has the <b>smallest</b> mean bill length?",
+      opts: ["Adelie","Chinstrap","Gentoo"], correct: "Adelie" },
+    { type: "estimation",
+      q: "Estimate the mean bill length for <b>Gentoo</b> penguins (mm).",
+      correct: 47.5 },
+    { type: "decision",
+      q: "A researcher claims Adelie and Gentoo have the <b>same</b> mean bill length. Do you agree or disagree?",
+      opts: ["Agree","Disagree"], correct: "Disagree" }
+  ],
+  [
+    { type: "ranking",
+      q: "Which species has the <b>second-largest</b> mean bill length?",
+      opts: ["Adelie","Chinstrap","Gentoo"], correct: "Gentoo" },
+    { type: "estimation",
+      q: "Estimate the mean bill length for <b>Adelie</b> penguins (mm).",
+      correct: 38.8 },
+    { type: "decision",
+      q: "A researcher claims Chinstrap has a <b>larger</b> mean bill length than Gentoo. Do you agree or disagree?",
+      opts: ["Agree","Disagree"], correct: "Agree" }
+  ]
+];
+
+var DISTRACTORS = [
+  { q: "What is 7 &times; 8 + 3?", answer: 59 },
+  { q: "What is 12 &times; 5 &minus; 7?", answer: 53 }
 ];
 
 var order, trialIdx, results, trialStart;
+var distractorsDone = [false, false];
 
 function shuffle(a) {
   for (var i = a.length - 1; i > 0; i--) {
@@ -171,6 +225,7 @@ function nextTrial() {
   if (typeof trialIdx === "undefined") {
     order = shuffle(ENCODINGS.slice());
     trialIdx = 0;
+    distractorsDone = [false, false];
     results = {
       participant: newSessionId(),
       group: orderToGroupKey(order),
@@ -180,10 +235,23 @@ function nextTrial() {
         literacy: document.getElementById("literacy").value
       },
       encoding_order: order.slice(),
-      trials: []
+      trials: [],
+      distractors: []
     };
   }
-  if (trialIdx >= order.length * TASKS.length) {
+
+  if (trialIdx === 3 && !distractorsDone[0]) {
+    distractorsDone[0] = true;
+    showDistractor(0);
+    return;
+  }
+  if (trialIdx === 6 && !distractorsDone[1]) {
+    distractorsDone[1] = true;
+    showDistractor(1);
+    return;
+  }
+
+  if (trialIdx >= 9) {
     show("p-feedback");
     return;
   }
@@ -192,14 +260,13 @@ function nextTrial() {
 }
 
 function loadTrial() {
-  var encIdx = Math.floor(trialIdx / TASKS.length);
-  var taskIdx = trialIdx % TASKS.length;
-  var enc = order[encIdx];
-  var task = TASKS[taskIdx];
+  var blockIdx = Math.floor(trialIdx / 3);
+  var taskIdx = trialIdx % 3;
+  var enc = order[blockIdx];
+  var task = TASK_SETS[blockIdx][taskIdx];
 
   document.getElementById("trial-heading").textContent =
-      "Trial " + (trialIdx+1) + " / " + (order.length * TASKS.length) +
-      "  (" + ENC_LABELS[enc] + ")";
+      "Trial " + (trialIdx+1) + " / 9  (" + ENC_LABELS[enc] + ")";
   document.getElementById("trial-img").src = "figures/" + enc + ".png";
   document.getElementById("trial-question").innerHTML = task.q;
 
@@ -224,9 +291,9 @@ function loadTrial() {
 }
 
 function submitTrial() {
-  var encIdx = Math.floor(trialIdx / TASKS.length);
-  var taskIdx = trialIdx % TASKS.length;
-  var task = TASKS[taskIdx];
+  var blockIdx = Math.floor(trialIdx / 3);
+  var taskIdx = trialIdx % 3;
+  var task = TASK_SETS[blockIdx][taskIdx];
 
   var answer;
   if (task.opts) {
@@ -241,8 +308,9 @@ function submitTrial() {
 
   results.trials.push({
     trial: trialIdx + 1,
-    encoding: order[encIdx],
-    task_type: task.type,
+    encoding: order[blockIdx],
+    task: task.type,
+    task_set: blockIdx + 1,
     answer: answer,
     confidence: conf,
     time_ms: elapsed
@@ -252,7 +320,26 @@ function submitTrial() {
   nextTrial();
 }
 
+function showDistractor(idx) {
+  var d = DISTRACTORS[idx];
+  document.getElementById("distractor-q").innerHTML = d.q;
+  document.getElementById("distractor-input").value = "";
+  show("p-distractor");
+}
+
+function submitDistractor() {
+  var dIdx = distractorsDone.filter(function(v){return v}).length - 1;
+  var given = parseFloat(document.getElementById("distractor-input").value);
+  results.distractors.push({
+    between_blocks: dIdx + 1,
+    expected: DISTRACTORS[dIdx].answer,
+    given: given
+  });
+  nextTrial();
+}
+
 function finish() {
+  results.recognition = document.getElementById("recognition").value;
   results.feedback = document.getElementById("fb-text").value;
   var json = JSON.stringify(results, null, 2);
   document.getElementById("results-box").textContent = json;
