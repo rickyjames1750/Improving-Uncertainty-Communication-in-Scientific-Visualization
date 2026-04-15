@@ -1,0 +1,536 @@
+\documentclass{article}
+
+\input{preamble}
+
+\addbibresource{paper.bib}
+
+\graphicspath{{figures/}}
+
+% custom colors for result tables
+\definecolor{navyhead}{HTML}{1B2A4A}
+\definecolor{altrow}{HTML}{F0F2F5}
+
+\title{Improving Uncertainty Communication in Scientific
+Visualization\footnote{CSCI 693 Research Methods in Computer Science,
+Spring 2026}}
+
+\author{
+  Ricky Sparks\affmark[1], Shelley Wong\affmark[2]\\
+  \affmark[1]Computer Science\\
+  \affmark[2]Computer Science Department\\
+  California State University, Chico\\
+  Chico, CA 95929\\
+  \email{\{rsparks2,swong26\}@csuchico.edu}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Scientific visualization frequently presents point estimates while
+under-communicating the uncertainty behind them, which can lead viewers
+to draw overconfident conclusions.  This study compares three common
+uncertainty encodings (error bars, violin + box plots, and hypothetical
+outcome plots (HOPs)) in a within-subjects experiment with 16
+participants using the Palmer Penguins dataset.  Parallel question sets
+and arithmetic distractors between blocks were used to reduce carry-over
+effects.  The HOPs grid produced the highest overall accuracy (100\%),
+followed by error bars (97.9\%) and violin/box plots (91.7\%).  The
+Friedman test on accuracy was significant ($\chi^2 = 27.1$, $df = 2$,
+$p < 0.05$), while response time differences were not.  These results
+suggest that showing multiple plausible outcomes can help viewers make
+better judgments, even for simple comparison tasks.
+\end{abstract}
+
+%======================================================================
+\section{Introduction}
+%======================================================================
+
+Scientific visualizations routinely present results that come from
+measurement, modeling, or sampling, all of which carry uncertainty.
+When that uncertainty is left out or poorly conveyed, viewers can draw
+overconfident conclusions or misjudge how strong the evidence really
+is~\cite{mehta2022}.  The trouble is not a lack of encoding options:
+error bars, box plots, violin plots, and hypothetical outcome plots
+(HOPs) are all readily available in modern charting libraries.  The
+trouble is that we do not have great empirical guidance on which option
+actually helps people the most, especially when the goal is not just
+``get the right answer'' but also ``know how sure you should be about
+it.''
+
+This study runs a controlled, within-subjects comparison of three
+common uncertainty encodings on a set of standardized interpretation
+tasks.  We measure decision accuracy, confidence calibration, and
+response time.  The dataset used for all stimuli is the Palmer Penguins
+dataset~\cite{horst2020}, chosen because it is small, clean,
+well-documented, and has real group differences that make the tasks
+meaningful.
+
+\subsection{Motivation}
+
+Surveys like \textcite{mehta2022} map how uncertainty enters the
+visualization pipeline and catalog the encoding strategies people use,
+but they stop short of recommending one strategy over another because
+the empirical evidence is thin.  \textcite{petek2025} offer a formal
+framework (treat the visualization as a function of uncertain inputs
+and propagate that uncertainty into a distribution over images), but
+their focus is on the math, not on whether end users actually benefit.
+On the empirical side, \textcite{stokes2024} compare speech, text, and
+visualization as modalities for communicating uncertainty and find that
+visualization supports rational decision-making, but they do not break
+the ``visualization'' category down further into encoding types.  The
+gap between knowing visualization works and knowing which encoding
+works best is what we are trying to fill.
+
+Applied work in scientific visualization reinforces this from a
+different angle.  \textcite{saklani2024} show that adding uncertainty
+overlays to DNN-based volume renderings increases trust among domain
+scientists, and \textcite{li2025} design bespoke uncertainty tubes for
+particle trajectories.  Both suggest that showing uncertainty helps,
+but neither tests general-purpose encodings like error bars or HOPs on
+common tasks.  Our study takes the opposite approach: rather than
+designing a new encoding for a specific domain, we take three existing
+general-purpose encodings and test them head-to-head on
+straightforward tasks.
+
+\subsection{Research Questions}
+
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+\item Which uncertainty encoding (error bars, distributional summaries,
+  or HOPs) produces the highest decision accuracy?
+\item Which encoding best supports confidence calibration, i.e.\ the
+  alignment between stated confidence and actual correctness?
+\item Do distributional encodings incur a measurable cost in task
+  completion time compared to error bars?
+\end{enumerate}
+
+\subsection{Hypotheses}
+
+We expected that both distributional encodings would produce higher
+decision accuracy and better confidence calibration than error bars,
+because they give viewers more information about the shape and spread
+of the underlying data.  Between the two, we expected violin/box plots
+to yield slightly better calibration than HOPs, since the continuous
+density shape maps more naturally onto ``how sure should I be?''
+judgments, whereas HOPs present discrete draws that may be harder to
+mentally aggregate.  HOPs, on the other hand, might produce higher raw
+accuracy on ranking and decision tasks, because each draw shows the
+between-group difference explicitly.  We also expected distributional
+encodings to require more time per trial than error bars, but not more
+than about 15~seconds additional per trial.  The pilot data ($n = 4$)
+showed a preliminary pattern consistent with this: error bars and
+violin/box had similar accuracy and timing, while HOPs were slower and
+slightly less accurate, likely because the static grid format was
+harder to parse.
+
+%======================================================================
+\section{Related Works}
+%======================================================================
+
+\subsection{Uncertainty in the Visualization Pipeline}
+
+\textcite{mehta2022} breaks the visualization pipeline into four stages
+(data collection, preprocessing, visualization, and inference) and
+surveys how uncertainty enters at each one.  The key takeaway for our
+study is that even when the data itself is clean, the visualization
+stage introduces representational choices that affect how viewers
+interpret uncertainty.  A bar chart with error bars communicates
+something different than a violin plot of the same data, and both
+communicate something different than a grid of plausible outcomes.
+Mehta's survey calls for more empirical work measuring how these
+choices affect viewer judgment.
+
+\subsection{Formal Frameworks for Uncertainty Encoding}
+
+\textcite{petek2025} propose treating a visualization as a function of
+uncertain inputs.  If the inputs carry a probability distribution, the
+output is a distribution over images rather than a single image.
+Familiar representations like confidence intervals and prediction bands
+fall out naturally from this framework.  We use a simplified version of
+their resampling approach to generate the HOPs stimuli: for each
+``draw,'' we resample the raw data with replacement and plot the
+resulting species means.
+
+\subsection{Modality Comparisons}
+
+\textcite{stokes2024} run two crowdsourced experiments comparing
+speech, text, and visualization for communicating data uncertainty.
+Visualization and text supported rational decision-making, while speech
+inspired more trust but also riskier choices.  Their study measures
+both decision quality and confidence, which we adopt.  The limitation
+is that ``visualization'' is treated as a single category; they do not
+vary the encoding within it.  We extend their approach by holding the
+modality constant and varying the encoding.
+
+\subsection{Uncertainty in Scientific Visualization Applications}
+
+\textcite{saklani2024} tackle uncertainty-aware volume rendering using
+Deep Ensembles and Monte Carlo Dropout, showing that surfacing
+prediction uncertainty makes DNN-based visualizations more trustworthy.
+\textcite{li2025} work on particle trajectories with an ``uncertainty
+tube'' that captures nonsymmetric error.  Both demonstrate that
+domain-specific encodings help, but neither tests the general-purpose
+encodings that most researchers reach for when they want to add
+uncertainty to a standard plot.
+
+\subsection{Research Gap}
+
+The literature shows that uncertainty is pervasive, formal tools exist
+for encoding it, and the choice of representation matters.  What is
+missing is a controlled comparison of the three most common encodings
+on the same tasks, measuring both accuracy and calibration.  That is
+what this study provides.
+
+%======================================================================
+\section{Methodology}
+%======================================================================
+
+\subsection{Research Design}
+
+We used a within-subjects experimental design: every participant saw
+all three encodings.  Encoding order was counterbalanced by randomly
+shuffling the three conditions per session, giving each participant one
+of six possible orderings drawn uniformly at random.  Task order within
+each block was fixed (ranking, estimation, decision).
+
+A brief arithmetic distractor task appeared between each encoding block
+to break short-term retention.  At the end of the session, participants
+answered a recognition-check question to provide self-report data on
+whether carry-over was still present.  This yields 9 trials per
+participant ($3 \times 3$), for a total of 144 trial observations.
+
+\subsection{Participants}
+
+Sixteen participants were recruited through convenience sampling,
+mostly friends and classmates from a range of departments.  All had
+normal or corrected-to-normal vision and were comfortable reading
+English.  The sample skewed young (8 aged 18--24, 6 aged 25--34, one
+35--44, one 45+) and technically literate (self-rated data literacy: 3
+at level~3, 4 at level~4, 9 at level~5; median~$= 5$).  Fields of
+study included Computer Science~(4), Mechanical Engineering, Electrical
+Engineering, Data Science, Bioengineering, Physics, Mathematics,
+Psychology, Symbolic Systems, Business Administration, Interaction
+Design, Computational Health, and Chicanx/Latinx Studies (1 each).
+Participation was voluntary and anonymous; no compensation was offered.
+
+\subsection{Materials}
+
+\subsubsection*{Stimuli}
+
+Three chart types were generated from the Palmer Penguins
+dataset~\cite{horst2020}, each showing bill length (mm) by species
+(Adelie, Chinstrap, Gentoo):
+
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+\item \textbf{Error bars:} bar chart of species means with 95\%
+  confidence interval error bars.  This is the baseline condition.
+\item \textbf{Violin + box plot:} violin plot overlaid with a box plot
+  showing distribution shape, median, and quartiles.
+\item \textbf{HOPs grid:} a $3 \times 4$ grid of 12 bootstrap draws,
+  each panel showing resampled species means as dot/lollipop plots,
+  with a caption explaining the display.
+\end{enumerate}
+
+All stimuli were generated using matplotlib 3.9.4 and are available in
+the project repository.
+
+\subsubsection*{Tasks}
+
+To prevent answer carry-over between encoding blocks, we used three
+parallel task sets with structurally identical question types but
+different content:
+
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item \textbf{Set~1 (Block~1):} Ranking: which species has the
+  \emph{largest} mean (Chinstrap).  Estimation: estimate the mean for
+  Chinstrap (48.8\,mm).  Decision: claim that Gentoo and Chinstrap
+  have the same mean (Disagree).
+\item \textbf{Set~2 (Block~2):} Ranking: which species has the
+  \emph{smallest} mean (Adelie).  Estimation: estimate the mean for
+  Gentoo (47.5\,mm).  Decision: claim that Adelie and Gentoo have the
+  same mean (Disagree).
+\item \textbf{Set~3 (Block~3):} Ranking: which species has the
+  \emph{second-largest} mean (Gentoo).  Estimation: estimate the mean
+  for Adelie (38.8\,mm).  Decision: claim that Chinstrap has a larger
+  mean than Gentoo (Agree).
+\end{itemize}
+
+Estimation answers were scored correct if within $\pm 2$\,mm of the
+true mean.  Confidence was rated on a 1--5 Likert scale after each
+task.
+
+\subsubsection*{Platform}
+
+Self-contained HTML/CSS/JS survey page with static PNG stimuli.
+Response timing was captured via JavaScript
+\texttt{performance.now()}.  Results were displayed as JSON for manual
+collection via copy-to-clipboard and download buttons.
+
+\subsection{Procedure}
+
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+\item Consent page with study description and time estimate
+  ($\sim$10\,min).
+\item Demographics: age range, major/field, self-rated data literacy
+  (1--5).
+\item Instructions.
+\item Nine trials in three blocks.  A short arithmetic distractor
+  appeared between blocks.
+\item Recognition check.
+\item Open-ended feedback.
+\item Thank-you page with JSON export (copy or download).
+\end{enumerate}
+
+Most participants were walked through the survey over FaceTime or Zoom;
+a few used the hosted link independently.
+
+\subsection{Measures}
+
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item \textbf{Decision accuracy:} proportion of correct responses per
+  encoding.
+\item \textbf{Confidence calibration:} Brier score,
+  $(\text{confidence}/5 - \text{correct})^2$ averaged per condition.
+  Lower is better.
+\item \textbf{Response time:} milliseconds from stimulus onset to
+  response submission, converted to seconds for reporting.
+\end{itemize}
+
+\subsection{Analysis}
+
+We used Friedman tests (non-parametric repeated measures) for accuracy
+and response time across encodings, with post-hoc pairwise Wilcoxon
+signed-rank tests where the overall test was significant.  We also
+report per-task-type breakdowns and a block-position analysis to check
+for residual order effects.
+
+\subsection{Ethical Considerations}
+
+The study was classified as exempt from full IRB review because it
+involved anonymous surveys with no collection of personally
+identifiable information.  Participants provided informed consent on the
+first page and could exit at any time.  No data were collected from
+minors.  All session data were stored locally and not transmitted to
+any external server.
+
+%======================================================================
+\section{Results}
+%======================================================================
+
+\subsection{Decision Accuracy}
+
+The HOPs grid had the highest accuracy (100\%), followed by error bars
+(97.9\%) and violin/box (91.7\%).  The Friedman test on accuracy was
+significant ($\chi^2 = 27.1$, $df = 2$, $p < 0.05$).  The violin/box
+ranking task was the main source of errors (81.2\%), while estimation
+accuracy was perfect across all three encodings.
+
+\begin{table}[ht]
+\centering
+\caption{Decision accuracy by encoding and task type.}
+\label{tab:accuracy}
+\rowcolors{2}{altrow}{white}
+\begin{tabular}{lcccc}
+\rowcolor{navyhead}
+\color{white}\textbf{Encoding} &
+\color{white}\textbf{Overall} &
+\color{white}\textbf{Ranking} &
+\color{white}\textbf{Estimation} &
+\color{white}\textbf{Decision} \\
+Error bars  & 97.9\% & 100\%  & 100\%  & 93.8\% \\
+Violin/box  & 91.7\% & 81.2\% & 100\%  & 93.8\% \\
+HOPs grid   & 100\%  & 100\%  & 100\%  & 100\%  \\
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:accuracy} shows the accuracy breakdown with 95\%
+confidence intervals.  The violin/box ranking condition is the only
+cell below ceiling.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\linewidth]{fig1_accuracy.png}
+  \caption{Proportion correct by encoding and task type.  Error bars
+    show 95\% confidence intervals.  Violin/box ranking is the only
+    condition below ceiling.}
+  \label{fig:accuracy}
+\end{figure}
+
+\subsection{Response Time}
+
+Violin/box had the longest average response time (39.9\,s).  Error
+bars (24.3\,s) and HOPs (26.1\,s) were comparable.  The Friedman test
+on response time was not significant ($\chi^2 = 4.6$, $df = 2$,
+$p > 0.05$).
+
+\begin{table}[ht]
+\centering
+\caption{Mean response time (seconds) by encoding and task type.}
+\label{tab:time}
+\rowcolors{2}{altrow}{white}
+\begin{tabular}{lcccc}
+\rowcolor{navyhead}
+\color{white}\textbf{Encoding} &
+\color{white}\textbf{Overall} &
+\color{white}\textbf{Ranking} &
+\color{white}\textbf{Estimation} &
+\color{white}\textbf{Decision} \\
+Error bars  & 24.3 & 23.8 & 25.9 & 23.2 \\
+Violin/box  & 39.9 & 40.6 & 41.7 & 37.4 \\
+HOPs grid   & 26.1 & 21.6 & 37.4 & 19.4 \\
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:time} shows the distribution of response times by
+encoding.  Violin/box had the widest spread and highest median, though
+the Friedman test was not significant.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\linewidth]{fig3_response_time.png}
+  \caption{Response time distributions by encoding.  Boxes show the
+    interquartile range; whiskers extend to 1.5$\times$IQR.}
+  \label{fig:time}
+\end{figure}
+
+\subsection{Confidence and Calibration}
+
+Mean confidence ratings were similar across encodings: error bars
+(4.65/5), HOPs grid (4.50/5), and violin/box (4.42/5).  Brier scores
+were low across the board, with error bars showing the best calibration
+(0.025) and violin/box the worst (0.048).  The narrow spread
+(0.025--0.048) indicates reasonably well-calibrated confidence in all
+conditions.
+
+\begin{table}[ht]
+\centering
+\caption{Confidence and calibration by encoding.}
+\label{tab:calibration}
+\rowcolors{2}{altrow}{white}
+\begin{tabular}{lcc}
+\rowcolor{navyhead}
+\color{white}\textbf{Encoding} &
+\color{white}\textbf{Mean confidence (1--5)} &
+\color{white}\textbf{Brier score} \\
+Error bars  & 4.65 & 0.025 \\
+Violin/box  & 4.42 & 0.048 \\
+HOPs grid   & 4.50 & 0.030 \\
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:heatmap} provides a per-participant view of trial-level
+correctness alongside each participant's age range and self-rated data
+literacy.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\linewidth]{fig10_correctness_heatmap.png}
+  \caption{Trial-level correctness heatmap for all 16 participants.
+    Green cells indicate correct answers; red cells indicate errors.
+    Age range and data literacy level are shown on the right axis.}
+  \label{fig:heatmap}
+\end{figure}
+
+%======================================================================
+\section{Discussion}
+%======================================================================
+
+\subsection{Interpretation of Results}
+
+Contrary to our expectation that HOPs might be harder to parse as a
+static grid, the HOPs encoding produced perfect accuracy across all
+task types.  Each panel shows a full resampled draw, making
+between-group differences visually explicit.  Participants could see at
+a glance whether groups overlapped, which may explain why ranking and
+decision tasks were especially easy to answer correctly.
+
+Violin/box plots showed the lowest ranking accuracy (81.2\%).  The
+violin shape encodes distributional information that is useful for some
+tasks but may actually obscure simple comparisons.  When asked which
+species has the largest mean, participants may have been drawn to the
+violin shape rather than the box-plot median, leading to more mistakes.
+The higher response times (39.9\,s overall) suggest participants spent
+more time parsing the richer display.
+
+Error bars had high accuracy (97.9\%) and the fastest response times
+(24.3\,s).  They also produced the best confidence calibration
+(Brier $= 0.025$).  For straightforward comparison tasks, error bars
+give viewers exactly what they need and nothing more.
+
+\subsection{Calibration}
+
+Our hypothesis that distributional encodings would improve calibration
+was not clearly supported.  All three encodings produced low Brier
+scores, and the differences were small.  The high overall accuracy left
+little room for miscalibration in any condition.  A study with harder
+tasks or noisier data might produce clearer separation.
+
+\subsection{Implications}
+
+These results suggest that for simple statistical comparison tasks,
+showing multiple plausible outcomes (HOPs) can help viewers make better
+decisions without significantly increasing task time.  For
+practitioners who need to communicate uncertainty to non-expert
+audiences, a static HOPs grid may be a practical alternative to error
+bars.  Violin/box plots, despite being richer in information, may
+introduce confusion when the task only requires comparing central
+tendencies.
+
+\subsection{Threats to Validity}
+
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item Small convenience sample of 16 participants, skewed toward STEM
+  fields and high data literacy.
+\item Three relatively simple task types on a clean, well-separated
+  dataset.
+\item Static HOPs only; animated HOPs were not tested.
+\item Parallel task sets reduced carry-over but introduced slight
+  content variation between blocks.
+\item Most sessions were conducted over video call, which may affect
+  timing data.
+\end{itemize}
+
+\subsection{Suggestions for Future Research}
+
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item Test animated HOPs against the same baselines to see if motion
+  further improves the advantage seen with the static grid.
+\item Use more complex tasks (trend detection, outlier identification)
+  where distributional shape should matter more.
+\item Recruit a larger and more diverse sample, including domain
+  scientists outside of STEM computing fields.
+\item Test on noisier datasets where group differences are less
+  obvious.
+\item Explore hybrid encodings that combine error bars with
+  distributional overlays.
+\end{itemize}
+
+%======================================================================
+\section{Conclusion}
+%======================================================================
+
+For common statistical comparison tasks, the static HOPs grid
+outperformed both error bars and violin/box plots on accuracy, while
+error bars remained the fastest and best-calibrated encoding.
+Violin/box plots carried a measurable cost: lower ranking accuracy and
+longer response times, without a corresponding gain in calibration.
+These results suggest that when the goal is simple group comparison,
+showing multiple plausible outcomes (HOPs) can help, and that
+distributional shape (violin) may actually hinder rather than help on
+straightforward tasks.
+
+The study contributes a controlled, within-subjects comparison of
+three widely used uncertainty encodings on standardized tasks, filling
+a gap in the existing literature that has focused on formal frameworks,
+modality comparisons, or domain-specific solutions rather than
+head-to-head empirical tests of general-purpose encodings.
+
+\section*{Acknowledgments}
+
+Thanks to the participants who volunteered their time, and to
+Professor Shelley Wong for advising on study design and providing feedback
+throughout the project.
+
+\printbibliography
+
+\end{document}
