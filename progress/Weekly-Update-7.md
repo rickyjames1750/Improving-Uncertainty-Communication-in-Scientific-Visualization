@@ -141,7 +141,7 @@ directly in Results and Discussion.
   the tie-corrected Friedman (χ² = 6.50, df = 2, *p* = 0.039,
   Kendall's *W* = 0.203), and Slide 14 reports the response-time
   Friedman (χ² = 4.63, df = 2, *p* = 0.099, *W* = 0.145).
-- Submitting the final research paper PDF for the Update #7 deadline
+- Submitted the final research paper PDF for the Update #7 deadline
   (same file as above:
   [`paper/Final Research Paper.pdf`](https://github.com/rickyjames1750/Improving-Uncertainty-Communication-in-Scientific-Visualization/blob/main/paper/Final%20Research%20Paper.pdf)).
 - Recorded and submitted the pre-recorded research presentation video.
