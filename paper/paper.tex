@@ -1,4 +1,5 @@
 \documentclass{article}
+% Build: pdflatex + biber + pdflatex x2, then: mv paper.pdf "Final Research Paper.pdf"
 
 \input{preamble}
 
@@ -15,12 +16,11 @@ Visualization\footnote{CSCI 693 Research Methods in Computer Science,
 Spring 2026}}
 
 \author{
-  Ricky Sparks\affmark[1], Shelley Wong\affmark[2]\\
-  \affmark[1]Computer Science\\
-  \affmark[2]Computer Science Department\\
+  Ricky Sparks\\
+  Computer Science\\
   California State University, Chico\\
   Chico, CA 95929\\
-  \email{\{rsparks2,swong26\}@csuchico.edu}
+  \email{rsparks2@csuchico.edu}
 }
 
 \begin{document}
@@ -29,17 +29,24 @@ Spring 2026}}
 \begin{abstract}
 Scientific visualization frequently presents point estimates while
 under-communicating the uncertainty behind them, which can lead viewers
-to draw overconfident conclusions.  This study compares three common
-uncertainty encodings (error bars, violin + box plots, and hypothetical
-outcome plots (HOPs)) in a within-subjects experiment with 16
-participants using the Palmer Penguins dataset.  Parallel question sets
-and arithmetic distractors between blocks were used to reduce carry-over
-effects.  The HOPs grid produced the highest overall accuracy (100\%),
-followed by error bars (97.9\%) and violin/box plots (91.7\%).  The
-Friedman test on accuracy was significant ($\chi^2 = 27.1$, $df = 2$,
-$p < 0.05$), while response time differences were not.  These results
-suggest that showing multiple plausible outcomes can help viewers make
-better judgments, even for simple comparison tasks.
+to draw overconfident conclusions.  This study compares three widely
+used uncertainty encodings (error bars, violin + box plots, and a
+\emph{static} hypothetical outcome plots (HOPs) grid) in a
+within-subjects experiment with 16 participants using the Palmer
+Penguins dataset.  Parallel question sets and arithmetic distractors
+between blocks were used to reduce carry-over effects.  The HOPs grid
+produced the highest overall accuracy (100\%), followed by error bars
+(97.9\%) and violin/box plots (91.7\%).  A participant-level,
+tie-corrected Friedman test on accuracy was significant
+($\chi^2 = 6.50$, $df = 2$, $p = 0.039$, Kendall's $W = 0.20$), while
+response time differences were not
+($\chi^2 = 4.63$, $df = 2$, $p = 0.099$).  Post-hoc pairwise Wilcoxon
+tests did not survive Bonferroni correction, and raw accuracy was at or
+near ceiling in every condition, so these results are best read as
+preliminary signal rather than conclusive evidence.  They are
+consistent with the possibility that showing multiple plausible
+outcomes helps viewers make better judgments on simple comparison
+tasks, and they motivate a larger follow-up study with harder stimuli.
 \end{abstract}
 
 %======================================================================
@@ -59,12 +66,26 @@ actually helps people the most, especially when the goal is not just
 it.''
 
 This study runs a controlled, within-subjects comparison of three
-common uncertainty encodings on a set of standardized interpretation
-tasks.  We measure decision accuracy, confidence calibration, and
-response time.  The dataset used for all stimuli is the Palmer Penguins
-dataset~\cite{horst2020}, chosen because it is small, clean,
-well-documented, and has real group differences that make the tasks
-meaningful.
+widely used uncertainty encodings on three standardized task types.
+Each task has a pre-specified ground truth: a \emph{ranking} task (pick
+the species with the largest/smallest/second-largest mean bill length),
+an \emph{estimation} task (report a species' mean bill length to within
+$\pm 2$\,mm), and a \emph{decision} task (agree or disagree with a
+claim about how two species compare).  Each participant completes one
+such block of three tasks per encoding.  We measure decision accuracy,
+confidence calibration, and response time.  The dataset used for all
+stimuli is the Palmer Penguins dataset~\cite{horst2020}, chosen because
+it is small, clean, well-documented, and has three species with means
+that are close enough to require real attention to the uncertainty
+(Adelie $= 38.8$\,mm, Gentoo $= 47.5$\,mm, Chinstrap $= 48.8$\,mm) yet
+far enough apart to define an unambiguous ground truth.  The Gentoo
+versus Chinstrap comparison in particular is the kind of case where a
+reader looking at a point estimate alone might over-commit, which is
+exactly the situation uncertainty encodings are designed to
+support.  For HOPs, we use a \emph{static} grid of twelve bootstrap
+resamples rather than the animated HOPs form typical in the original
+literature~\cite{hullman2015}, because a static display is what most
+practitioners can actually embed in a paper, slide deck, or dashboard.
 
 \subsection{Motivation}
 
@@ -86,45 +107,86 @@ Applied work in scientific visualization reinforces this from a
 different angle.  \textcite{saklani2024} show that adding uncertainty
 overlays to DNN-based volume renderings increases trust among domain
 scientists, and \textcite{li2025} design bespoke uncertainty tubes for
-particle trajectories.  Both suggest that showing uncertainty helps,
-but neither tests general-purpose encodings like error bars or HOPs on
-common tasks.  Our study takes the opposite approach: rather than
-designing a new encoding for a specific domain, we take three existing
-general-purpose encodings and test them head-to-head on
-straightforward tasks.
+particle trajectories.  These encodings are tightly coupled to the
+structures they visualize (volumetric scalar fields, particle paths);
+their design lessons do not straightforwardly transfer to the
+bar-chart-style group comparisons that dominate day-to-day scientific
+communication.  When a practitioner has a handful of sample means and
+wants to convey uncertainty around them, they typically reach for a
+general-purpose encoding: error bars, a violin or box plot, or some
+form of HOPs.  The empirical question of which of those general-purpose
+encodings best supports accurate, well-calibrated judgments is largely
+unsettled in the recent literature, which is the gap our study
+addresses.
 
 \subsection{Research Questions}
 
 \begin{enumerate}[leftmargin=*, itemsep=4pt]
-\item Which uncertainty encoding (error bars, distributional summaries,
-  or HOPs) produces the highest decision accuracy?
-\item Which encoding best supports confidence calibration, i.e.\ the
-  alignment between stated confidence and actual correctness?
-\item Do distributional encodings incur a measurable cost in task
-  completion time compared to error bars?
+\item \textbf{RQ1 (accuracy).}  Which encoding produces the highest
+  proportion of correct responses across the three task types, where
+  \emph{correct} is defined against a pre-specified ground truth for
+  each trial (species identity for ranking, numeric answer within
+  $\pm 2$\,mm for estimation, agree/disagree match for decision)?
+\item \textbf{RQ2 (calibration).}  Which encoding produces the best
+  alignment between stated confidence and actual correctness, as
+  measured by the Brier score
+  $(\text{confidence}/5 - \text{correct})^2$ averaged per condition,
+  with an overconfidence index (mean confidence$/5 -$ mean accuracy)
+  reported alongside?
+\item \textbf{RQ3 (time cost).}  Do distributional encodings incur a
+  measurable cost in per-trial completion time compared to error bars,
+  where completion time is measured from stimulus render to response
+  submission?
 \end{enumerate}
 
 \subsection{Hypotheses}
 
-We expected that both distributional encodings would produce higher
-decision accuracy and better confidence calibration than error bars,
-because they give viewers more information about the shape and spread
-of the underlying data.  Between the two, we expected violin/box plots
-to yield slightly better calibration than HOPs, since the continuous
-density shape maps more naturally onto ``how sure should I be?''
-judgments, whereas HOPs present discrete draws that may be harder to
-mentally aggregate.  HOPs, on the other hand, might produce higher raw
-accuracy on ranking and decision tasks, because each draw shows the
-between-group difference explicitly.  We also expected distributional
-encodings to require more time per trial than error bars, but not more
-than about 15~seconds additional per trial.  The pilot data ($n = 4$)
-showed a preliminary pattern consistent with this: error bars and
-violin/box had similar accuracy and timing, while HOPs were slower and
-slightly less accurate, likely because the static grid format was
-harder to parse.
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item \textbf{H1 (maps to RQ1).}  Distributional encodings (violin/box
+  and HOPs) will yield higher accuracy than error bars.  HOPs in
+  particular should do well on ranking and decision tasks because each
+  panel makes the between-group difference visually explicit.
+\item \textbf{H2 (maps to RQ2).}  Violin/box will yield the best
+  Brier-score calibration because the continuous density shape maps
+  more naturally onto ``how sure should I be?'' judgments, while HOPs
+  may leave participants uncertain about how to aggregate over
+  discrete draws.
+\item \textbf{H3 (maps to RQ3).}  Both distributional encodings will
+  take longer per trial than error bars, but by no more than roughly
+  15~seconds on average.  This threshold was set a priori by
+  budgeting: the full 9-trial survey was advertised to participants as
+  a $\sim 10$-minute task, which leaves a per-block budget of about
+  3~minutes; a per-trial overhead above $\sim 15$~seconds would
+  push a distributional block past that block budget and become a
+  noticeable cost rather than a marginal one.
+\end{itemize}
+
+The pilot run ($n = 4$) and the main study ($n = 16$) tell partially
+different stories, which is worth flagging up front.  In the pilot,
+error bars and violin/box plots had similar accuracy and timing, while
+HOPs were slower and slightly less accurate, which we attributed to
+unfamiliarity with the static grid format.  Based on the pilot we made
+three changes before the main study: we added parallel task sets
+(three different ranking targets, three different estimation species,
+and three different decision claims) to reduce answer carry-over,
+inserted a short arithmetic distractor between encoding blocks, and
+added an end-of-study recognition check.  In the main study, accuracy
+rose across all three encodings (see Results), HOPs moved from worst
+to best on accuracy, and the accuracy gap between encodings narrowed
+enough that a ceiling effect is a real concern.  H1 is partly
+supported by the main-study data; H2 and the exact timing claim in H3
+are not.
+
+\subsection{Scope and Organization}
+
+Section~2 reviews related literature and identifies the empirical gap
+this study addresses.  Section~3 describes the methodology, sample,
+stimuli, and analysis plan.  Section~4 reports results for accuracy,
+response time, and calibration.  Section~5 discusses findings,
+implications, limitations, and future work.  Section~6 concludes.
 
 %======================================================================
-\section{Related Works}
+\section{Literature Review}
 %======================================================================
 
 \subsection{Uncertainty in the Visualization Pipeline}
@@ -175,11 +237,18 @@ uncertainty to a standard plot.
 
 \subsection{Research Gap}
 
-The literature shows that uncertainty is pervasive, formal tools exist
-for encoding it, and the choice of representation matters.  What is
-missing is a controlled comparison of the three most common encodings
-on the same tasks, measuring both accuracy and calibration.  That is
-what this study provides.
+The literature shows that uncertainty is pervasive, formal tools
+exist for encoding it, and the choice of representation matters.
+What is missing is a controlled head-to-head comparison of three
+widely used general-purpose encodings on the same standardized tasks,
+with both accuracy and calibration measured explicitly.  By
+\emph{accuracy} we mean the proportion of task responses that match
+the pre-specified ground truth for that trial; by \emph{calibration}
+we mean the agreement between a participant's stated confidence
+(1--5 Likert, mapped to $[0.2, 1.0]$) and whether their answer was
+actually correct, quantified by the Brier score and supplemented with
+an overconfidence index (mean confidence$/5 -$ mean accuracy).  The
+present study addresses that gap directly.
 
 %======================================================================
 \section{Methodology}
@@ -255,8 +324,21 @@ different content:
   mean than Gentoo (Agree).
 \end{itemize}
 
-Estimation answers were scored correct if within $\pm 2$\,mm of the
-true mean.  Confidence was rated on a 1--5 Likert scale after each
+Correctness was defined per task type:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item \emph{Ranking:} the selected species matches the known largest,
+  smallest, or second-largest mean for that block.
+\item \emph{Estimation:} the numeric answer is within $\pm 2$\,mm of
+  the true species mean.  The $\pm 2$\,mm tolerance was chosen a
+  priori to be close to one standard error of the species-level means
+  at the dataset's sample sizes ($n \approx 50$--$150$ per species),
+  giving enough slack to absorb minor arithmetic or reading error but
+  still tight enough to discriminate among Adelie ($38.8$\,mm),
+  Gentoo ($47.5$\,mm), and Chinstrap ($48.8$\,mm).
+\item \emph{Decision:} the agree/disagree response matches the
+  ground-truth relation between the two referenced species.
+\end{itemize}
+Confidence was rated on a 1--5 Likert scale immediately after each
 task.
 
 \subsubsection*{Platform}
@@ -288,30 +370,67 @@ a few used the hosted link independently.
 
 \begin{itemize}[leftmargin=*, itemsep=4pt]
 \item \textbf{Decision accuracy:} proportion of correct responses per
-  encoding.
+  encoding per participant, then averaged across participants for the
+  condition-level summary.
 \item \textbf{Confidence calibration:} Brier score,
-  $(\text{confidence}/5 - \text{correct})^2$ averaged per condition.
-  Lower is better.
-\item \textbf{Response time:} milliseconds from stimulus onset to
-  response submission, converted to seconds for reporting.
+  $(\text{confidence}/5 - \text{correct})^2$, averaged per condition.
+  Lower is better.  Confidence is measured on a 1--5 Likert scale,
+  which maps under this scheme to probabilities in $[0.2, 1.0]$, not
+  $[0, 1]$.  That has two implications worth calling out: (a) the
+  Brier score cannot reach 0 for a participant who answers
+  incorrectly even at the minimum confidence value, and (b) the 5-step
+  Likert scale is coarse, so a participant who chose ``3'' could
+  plausibly have meant anywhere from about 55\% to 65\% confidence
+  given finer granularity.  We therefore pair Brier with an
+  \textbf{overconfidence index}, defined per condition as
+  (mean confidence$/5) - $(mean accuracy).  Positive values indicate
+  overconfidence, negative values indicate underconfidence.
+\item \textbf{Response time:} milliseconds from the moment the
+  stimulus and question text finished rendering on the participant's
+  screen until they clicked Submit for that trial, captured via
+  JavaScript \texttt{performance.now()}.  This interval does not
+  include time spent on the consent page, demographics, instructions,
+  or the between-block arithmetic distractors, and it does not include
+  time spent locating or loading the survey itself.  It is intended
+  to reflect just the interpretation cost of the encoding on that
+  trial.
 \end{itemize}
 
 \subsection{Analysis}
 
-We used Friedman tests (non-parametric repeated measures) for accuracy
-and response time across encodings, with post-hoc pairwise Wilcoxon
-signed-rank tests where the overall test was significant.  We also
-report per-task-type breakdowns and a block-position analysis to check
-for residual order effects.
+All statistical tests were conducted at the \textbf{participant
+level} ($n = 16$), not the trial level ($n = 144$).  For each
+participant and each encoding, we first computed the mean accuracy and
+the mean response time across that participant's three trials in the
+block, yielding three paired values per participant per metric.
+
+For the overall across-encoding comparison we used the Friedman test
+with tie correction, which is the appropriate non-parametric repeated
+-measures test for three related samples.  We report Kendall's
+coefficient of concordance $W$ as a standardized effect size
+($W \in [0, 1]$).  Where the omnibus Friedman test was significant we
+ran post-hoc pairwise Wilcoxon signed-rank tests (two-sided, normal
+approximation with continuity correction) on the three encoding
+pairs and applied Bonferroni correction ($\alpha = 0.05 / 3$).  We
+also report per-task-type breakdowns and an IQR-based outlier check
+on the single sub-cell that fell below ceiling (violin/box ranking).
+
+An earlier version of this analysis computed Friedman ranks without
+handling ties in participant-level accuracy scores (many participants
+had tied condition-level accuracies at 100\%), which substantially
+inflated the chi-square statistic.  The numbers reported in this
+draft use the tie-corrected implementation.
 
 \subsection{Ethical Considerations}
 
-The study was classified as exempt from full IRB review because it
-involved anonymous surveys with no collection of personally
-identifiable information.  Participants provided informed consent on the
-first page and could exit at any time.  No data were collected from
-minors.  All session data were stored locally and not transmitted to
-any external server.
+This study was not submitted to an IRB for review.  Its design is
+consistent with the CSU Chico exempt-category criteria for anonymous,
+minimal-risk educational research (no PII, voluntary participation,
+ability to withdraw at any time), but the exempt classification was
+self-assigned by the researcher rather than formally granted.
+Participants provided informed consent on the first page, no data
+were collected from minors, and all session exports were stored
+locally and not transmitted to any external server.
 
 %======================================================================
 \section{Results}
@@ -319,11 +438,25 @@ any external server.
 
 \subsection{Decision Accuracy}
 
-The HOPs grid had the highest accuracy (100\%), followed by error bars
-(97.9\%) and violin/box (91.7\%).  The Friedman test on accuracy was
-significant ($\chi^2 = 27.1$, $df = 2$, $p < 0.05$).  The violin/box
-ranking task was the main source of errors (81.2\%), while estimation
-accuracy was perfect across all three encodings.
+The HOPs grid had the highest aggregate accuracy (100\%), followed by
+error bars (97.9\%) and violin/box (91.7\%).  Nine of the sixteen
+participants achieved perfect accuracy on all three encodings, and
+every participant was at ceiling on the estimation and decision task
+types for error bars and HOPs.  A tie-corrected Friedman test at the
+participant level was significant but with a modest effect size:
+$\chi^2 = 6.50$, $df = 2$, $p = 0.039$, Kendall's $W = 0.203$.  The
+Bonferroni-corrected threshold for the three post-hoc Wilcoxon
+signed-rank tests is $\alpha = 0.017$; none of the three pairs cleared
+that bar (error bars vs.\ violin/box $p = 0.18$, error bars vs.\ HOPs
+$p = 1.00$, violin/box vs.\ HOPs $p = 0.10$).  Almost all of the
+between-encoding signal came from a single cell: the violin/box
+\emph{ranking} task, where accuracy was $81.2\%$.  An IQR-based check
+on that cell flagged three participants as outliers; those three
+participants accounted for \emph{every} ranking error in the violin/box
+condition.  The other thirteen participants were at ceiling on that
+task.  Estimation accuracy was $100\%$ in all three encodings.
+Given the high ceiling and the small sample, the accuracy result
+should be read as preliminary rather than conclusive.
 
 \begin{table}[ht]
 \centering
@@ -360,8 +493,14 @@ cell below ceiling.
 
 Violin/box had the longest average response time (39.9\,s).  Error
 bars (24.3\,s) and HOPs (26.1\,s) were comparable.  The Friedman test
-on response time was not significant ($\chi^2 = 4.6$, $df = 2$,
-$p > 0.05$).
+on response time was not significant at $\alpha = 0.05$:
+$\chi^2 = 4.63$, $df = 2$, $p = 0.099$, Kendall's $W = 0.145$
+(a small effect).  Descriptively, violin/box was about $15.6$\,s
+slower per trial than error bars and $13.8$\,s slower than HOPs, but
+the within-participant pattern was inconsistent enough that the
+omnibus test did not cross significance, and we did not run post-hoc
+comparisons for that reason.  A larger sample might resolve this into
+a significant effect, but we do not claim one here.
 
 \begin{table}[ht]
 \centering
@@ -398,23 +537,33 @@ the Friedman test was not significant.
 Mean confidence ratings were similar across encodings: error bars
 (4.65/5), HOPs grid (4.50/5), and violin/box (4.42/5).  Brier scores
 were low across the board, with error bars showing the best calibration
-(0.025) and violin/box the worst (0.048).  The narrow spread
-(0.025--0.048) indicates reasonably well-calibrated confidence in all
-conditions.
+(0.025) and violin/box the worst (0.048).  The overconfidence index
+was slightly \emph{negative} in every condition (error bars $-0.050$,
+violin/box $-0.033$, HOPs $-0.100$), meaning participants were, if
+anything, slightly underconfident relative to their near-perfect
+accuracy.  This is the expected pattern when accuracy is pressed
+against a 1.0 ceiling: stated confidence of $4/5$ ($= 0.8$) still
+leaves a negative index when accuracy is $1.0$.  The narrow Brier
+spread (0.025--0.048) should therefore be interpreted against this
+ceiling, not as strong evidence that one encoding is meaningfully
+better calibrated than another.
 
 \begin{table}[ht]
 \centering
-\caption{Confidence and calibration by encoding.}
+\caption{Confidence and calibration by encoding.  The overconfidence
+  index (OC) is mean confidence$/5$ minus mean accuracy; negative
+  values indicate underconfidence.}
 \label{tab:calibration}
 \rowcolors{2}{altrow}{white}
-\begin{tabular}{lcc}
+\begin{tabular}{lccc}
 \rowcolor{navyhead}
 \color{white}\textbf{Encoding} &
-\color{white}\textbf{Mean confidence (1--5)} &
-\color{white}\textbf{Brier score} \\
-Error bars  & 4.65 & 0.025 \\
-Violin/box  & 4.42 & 0.048 \\
-HOPs grid   & 4.50 & 0.030 \\
+\color{white}\textbf{Mean conf.\ (1--5)} &
+\color{white}\textbf{Brier} &
+\color{white}\textbf{OC index} \\
+Error bars  & 4.65 & 0.025 & $-0.050$ \\
+Violin/box  & 4.42 & 0.048 & $-0.033$ \\
+HOPs grid   & 4.50 & 0.030 & $-0.100$ \\
 \end{tabular}
 \end{table}
 
@@ -437,57 +586,111 @@ literacy.
 
 \subsection{Interpretation of Results}
 
-Contrary to our expectation that HOPs might be harder to parse as a
-static grid, the HOPs encoding produced perfect accuracy across all
-task types.  Each panel shows a full resampled draw, making
-between-group differences visually explicit.  Participants could see at
-a glance whether groups overlapped, which may explain why ranking and
-decision tasks were especially easy to answer correctly.
+Our main-study accuracy pattern did not line up with H1 and H2 in the
+way we expected: HOPs, not violin/box, led on accuracy, and violin/box
+was actively worse than error bars on the ranking task.  A few
+non-exclusive explanations are consistent with the data:
 
-Violin/box plots showed the lowest ranking accuracy (81.2\%).  The
-violin shape encodes distributional information that is useful for some
-tasks but may actually obscure simple comparisons.  When asked which
-species has the largest mean, participants may have been drawn to the
-violin shape rather than the box-plot median, leading to more mistakes.
-The higher response times (39.9\,s overall) suggest participants spent
-more time parsing the richer display.
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+\item \emph{Task-encoding alignment.}  Each HOPs panel makes the
+  between-group ordering visible as a small picture; a participant
+  doing a ranking task only has to scan panels and count
+  ``which species is higher, most of the time.''  That is close to an
+  optimal match between task and display.
+\item \emph{Density dominance in violin/box.}  The violin's bulbous
+  density silhouette is visually louder than the thin box-plot median
+  line it wraps around.  On ranking, where the relevant cue is a
+  single central tendency, the density shape seems to have pulled
+  attention away from the median, leading the three outlier
+  participants to rank by visual mass rather than by the embedded
+  summary statistic.
+\item \emph{Unfamiliarity as an attention cue.}  Participants had far
+  more prior exposure to error bars than to HOPs, so the HOPs
+  condition may have forced slower, more deliberate looking, while
+  the familiar error bars may have encouraged a quicker pattern
+  match.  Unfamiliarity can paradoxically improve accuracy on simple
+  tasks by suppressing overlearned heuristics.
+\item \emph{Cognitive load and ceiling effects.}  All three task
+  types had a clear ground truth and a clean, well-separated dataset;
+  the tasks were arguably too easy to discriminate the encodings,
+  which is consistent with the high overall accuracy and the
+  compressed Brier-score range.
+\end{itemize}
 
 Error bars had high accuracy (97.9\%) and the fastest response times
-(24.3\,s).  They also produced the best confidence calibration
-(Brier $= 0.025$).  For straightforward comparison tasks, error bars
-give viewers exactly what they need and nothing more.
+(24.3\,s), with the best numerical Brier score (0.025).  We are
+cautious about calling them the best-calibrated encoding because, as
+noted, the ceiling in accuracy mechanically compresses Brier score
+across conditions; the ordering among 0.025, 0.030, and 0.048 is not
+something we would bet on outside this specific task set.
 
 \subsection{Calibration}
 
-Our hypothesis that distributional encodings would improve calibration
-was not clearly supported.  All three encodings produced low Brier
-scores, and the differences were small.  The high overall accuracy left
-little room for miscalibration in any condition.  A study with harder
-tasks or noisier data might produce clearer separation.
+H2 (violin/box would produce the best calibration) was not supported.
+Error bars had the numerically lowest Brier score, violin/box the
+highest, and all three encodings sat in a narrow band where the
+overconfidence index was slightly negative.  The most honest reading
+is that accuracy near 1.0 mechanically caps how much Brier score can
+vary between conditions.  A harder task set (for example a dataset
+with more overlapping distributions, or with a noisy underlying
+process) would be needed to test H2 on its own terms, because only
+then would a participant who was genuinely \emph{over}confident be
+able to show up in the data.
 
 \subsection{Implications}
 
-These results suggest that for simple statistical comparison tasks,
-showing multiple plausible outcomes (HOPs) can help viewers make better
-decisions without significantly increasing task time.  For
-practitioners who need to communicate uncertainty to non-expert
-audiences, a static HOPs grid may be a practical alternative to error
-bars.  Violin/box plots, despite being richer in information, may
-introduce confusion when the task only requires comparing central
-tendencies.
+Read cautiously, these results suggest that for simple group-comparison
+tasks on clean data, a static HOPs grid can match or slightly exceed
+error bars on accuracy without imposing a clear additional time cost,
+and that violin/box plots, despite being richer in information, may
+actively mislead a subset of viewers on ranking tasks where the
+density silhouette overwhelms the median.  None of those statements
+is strong enough to act on without replication at a larger sample
+size or with harder task sets, but the direction of the signal is
+consistent with earlier HOPs work~\cite{hullman2015} even though our
+HOPs were static rather than animated.
 
-\subsection{Threats to Validity}
+\subsection{Limitations}
 
 \begin{itemize}[leftmargin=*, itemsep=4pt]
-\item Small convenience sample of 16 participants, skewed toward STEM
-  fields and high data literacy.
-\item Three relatively simple task types on a clean, well-separated
-  dataset.
-\item Static HOPs only; animated HOPs were not tested.
-\item Parallel task sets reduced carry-over but introduced slight
-  content variation between blocks.
-\item Most sessions were conducted over video call, which may affect
-  timing data.
+\item \emph{Ceiling effects.}  Accuracy was at or near $100\%$ in
+  every encoding, which mechanically compresses differences on both
+  accuracy and Brier score and limits what the omnibus test can see.
+\item \emph{Small sample.}  $n = 16$ is small for Friedman-style
+  tests; effect-size estimates are unstable and the significant
+  omnibus result on accuracy did not survive Bonferroni correction in
+  the post-hoc pairwise tests.  We should treat this as pilot-scale
+  evidence.
+\item \emph{Sample composition.}  The convenience sample was
+  recruited from a Bay Area / Silicon Valley peninsula social network
+  with an above-average density of current and former STEM graduate
+  students and industry engineers.  Self-rated data literacy was
+  correspondingly high (median $= 5/5$).  This biases performance
+  upward in every condition and is likely part of why the data hit
+  ceiling; a sample drawn from the general public would almost
+  certainly show lower absolute accuracy and, possibly, wider spreads
+  between encodings.
+\item \emph{Task simplicity.}  Three task types on a clean,
+  well-separated dataset with three well-known species.  The Adelie
+  mean in particular is so far from the other two that most
+  participants likely did not need any uncertainty information to
+  answer ranking and decision questions correctly.
+\item \emph{Static HOPs only.}  Animated HOPs, which is the original
+  form in \cite{hullman2015}, were not tested.  The static grid is a
+  practical simplification, not a faithful replication of prior
+  HOPs work.
+\item \emph{Parallel task sets.}  Parallel sets reduced answer
+  carry-over but introduced slight content variation between blocks
+  (different ranking targets, different estimation species).  Any
+  leftover difficulty asymmetry between sets could show up as
+  encoding difference because of the within-subjects block
+  assignment.
+\item \emph{Environmental inconsistency.}  Most sessions were
+  proctored over Zoom or FaceTime, but a few participants used the
+  hosted link independently.  Proctor presence can introduce
+  implicit time pressure, compress reading, and change the set of
+  clarifying questions participants ask.  This adds noise to the
+  response-time measure in particular.
 \end{itemize}
 
 \subsection{Suggestions for Future Research}
@@ -509,21 +712,45 @@ tendencies.
 \section{Conclusion}
 %======================================================================
 
-For common statistical comparison tasks, the static HOPs grid
-outperformed both error bars and violin/box plots on accuracy, while
-error bars remained the fastest and best-calibrated encoding.
-Violin/box plots carried a measurable cost: lower ranking accuracy and
-longer response times, without a corresponding gain in calibration.
-These results suggest that when the goal is simple group comparison,
-showing multiple plausible outcomes (HOPs) can help, and that
-distributional shape (violin) may actually hinder rather than help on
-straightforward tasks.
+On common group-comparison tasks over a clean, well-separated dataset,
+a static HOPs grid slightly outperformed both error bars and
+violin/box plots on accuracy, while error bars were numerically the
+fastest and best-calibrated encoding.  Violin/box carried a
+descriptive cost on the ranking task and on per-trial response time,
+though neither cost was large enough to survive the conservative
+statistical thresholds once sample size and ceiling effects were
+taken into account.
 
-The study contributes a controlled, within-subjects comparison of
-three widely used uncertainty encodings on standardized tasks, filling
-a gap in the existing literature that has focused on formal frameworks,
-modality comparisons, or domain-specific solutions rather than
-head-to-head empirical tests of general-purpose encodings.
+We present these results as pilot-scale, directional evidence rather
+than as a definitive recommendation.  They are consistent with the
+broader finding in the HOPs literature~\cite{hullman2015} that
+showing multiple plausible outcomes can help viewers reason about
+uncertainty, and they suggest a concrete follow-up: the same design
+with a harder stimulus set (more overlapping distributions, noisier
+data), a larger and more diverse sample, and an animated HOPs
+condition to pair against the static grid.
+
+The study's primary contribution is methodological: a controlled,
+within-subjects comparison of three widely used general-purpose
+uncertainty encodings on three standardized task types, with explicit
+definitions of \emph{correct}, an overconfidence index alongside the
+Brier score, and a participant-level, tie-corrected non-parametric
+analysis.  That combination fills a gap in the recent literature,
+which has focused on formal frameworks, modality comparisons, or
+domain-specific solutions rather than on head-to-head empirical tests
+of the general-purpose encodings that most practitioners actually
+reach for.
+
+\subsection*{Closing Thoughts}
+
+Uncertainty communication sits at the intersection of statistics,
+perception, and design, and most scientific figures still default to
+a simple error bar.  Even at this pilot scale, the data suggest the
+default is not automatically the best choice, and that encoding
+decisions are empirical questions as much as aesthetic ones.  Scaled
+up to harder tasks and a more diverse sample, this line of work
+could produce practical guidance that meaningfully improves how
+uncertainty reaches the readers of scientific figures.
 
 \section*{Acknowledgments}
 
