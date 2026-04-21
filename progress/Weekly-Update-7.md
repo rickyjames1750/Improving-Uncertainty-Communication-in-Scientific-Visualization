@@ -144,6 +144,8 @@ directly in Results and Discussion.
 - Submitting the final research paper PDF for the Update #7 deadline
   (same file as above:
   [`paper/Final Research Paper.pdf`](https://github.com/rickyjames1750/Improving-Uncertainty-Communication-in-Scientific-Visualization/blob/main/paper/Final%20Research%20Paper.pdf)).
+- Recorded and submitted the pre-recorded research presentation video.
+  Link: https://drive.google.com/file/d/1isnzGAjqixMhtMS279-TtbXtkO6o7hfw/view
 
 ## What is blocking your progress?
 
@@ -151,6 +153,5 @@ Nothing blocking.
 
 ## What is your plan for the next week?
 
-- Record the in-class video presentation and submit it.
 - Incorporate anything useful I pick up from classmates'
   presentations into notes for future work.
