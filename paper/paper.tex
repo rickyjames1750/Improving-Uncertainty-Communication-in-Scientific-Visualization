@@ -34,16 +34,18 @@ used uncertainty encodings (error bars, violin + box plots, and a
 \emph{static} hypothetical outcome plots (HOPs) grid) in a
 within-subjects experiment with 16 participants using the Palmer
 Penguins dataset.  Parallel question sets and arithmetic distractors
-between blocks were used to reduce carry-over effects.  The HOPs grid
-produced the highest overall accuracy (100\%), followed by error bars
-(97.9\%) and violin/box plots (91.7\%).  A participant-level,
-tie-corrected Friedman test on accuracy was significant
-($\chi^2 = 6.50$, $df = 2$, $p = 0.039$, Kendall's $W = 0.20$), while
-response time differences were not
-($\chi^2 = 4.63$, $df = 2$, $p = 0.099$).  Post-hoc pairwise Wilcoxon
-tests did not survive Bonferroni correction, and raw accuracy was at or
-near ceiling in every condition, so these results are best read as
-preliminary signal rather than conclusive evidence.  They are
+between blocks were used to reduce carry-over effects.  In this
+sample, the HOPs grid had the highest aggregate accuracy
+(100\% of 48 trials), followed by error bars (97.9\%) and violin/box
+plots (91.7\%).  All three encodings were at or near ceiling, so the
+100\% figure should be read as ``no errors observed in this small,
+high-data-literacy sample on these specific tasks,'' not as evidence
+that HOPs are universally perfect.  A participant-level, tie-corrected
+Friedman test on accuracy was significant ($\chi^2 = 6.50$, $df = 2$,
+$p = 0.039$, Kendall's $W = 0.20$), while response time differences
+were not ($\chi^2 = 4.63$, $df = 2$, $p = 0.099$).  Post-hoc pairwise
+Wilcoxon tests did not survive Bonferroni correction, so these results
+are best read as preliminary signal rather than conclusive evidence.  They are
 consistent with the possibility that showing multiple plausible
 outcomes helps viewers make better judgments on simple comparison
 tasks, and they motivate a larger follow-up study with harder stimuli.
@@ -438,29 +440,39 @@ locally and not transmitted to any external server.
 
 \subsection{Decision Accuracy}
 
-The HOPs grid had the highest aggregate accuracy (100\%), followed by
-error bars (97.9\%) and violin/box (91.7\%).  Nine of the sixteen
-participants achieved perfect accuracy on all three encodings, and
-every participant was at ceiling on the estimation and decision task
-types for error bars and HOPs.  A tie-corrected Friedman test at the
-participant level was significant but with a modest effect size:
-$\chi^2 = 6.50$, $df = 2$, $p = 0.039$, Kendall's $W = 0.203$.  The
-Bonferroni-corrected threshold for the three post-hoc Wilcoxon
-signed-rank tests is $\alpha = 0.017$; none of the three pairs cleared
-that bar (error bars vs.\ violin/box $p = 0.18$, error bars vs.\ HOPs
-$p = 1.00$, violin/box vs.\ HOPs $p = 0.10$).  Almost all of the
-between-encoding signal came from a single cell: the violin/box
+In this sample of 16 participants and 48 trials per encoding, the HOPs
+grid had the highest aggregate accuracy (48/48 = 100\%), followed by
+error bars (47/48 = 97.9\%) and violin/box (44/48 = 91.7\%).  We use
+``100\%'' here in its narrow, descriptive sense: zero errors observed
+on these three task types, by these sixteen participants, on this one
+clean dataset.  It is not a claim that HOPs produce error-free
+judgments in general.  Nine of the sixteen participants were
+themselves at 100\% on all three encodings, and every participant was
+at ceiling on the estimation and decision task types for error bars
+and HOPs.  This compresses what the statistical test can see:
+a tie-corrected Friedman test at the participant level was significant
+but with a modest effect size ($\chi^2 = 6.50$, $df = 2$, $p = 0.039$,
+Kendall's $W = 0.203$), and none of the three post-hoc Wilcoxon
+signed-rank tests cleared the Bonferroni-corrected threshold of
+$\alpha = 0.017$ (error bars vs.\ violin/box $p = 0.18$, error bars
+vs.\ HOPs $p = 1.00$, violin/box vs.\ HOPs $p = 0.10$).  Almost all of
+the between-encoding signal came from a single cell: the violin/box
 \emph{ranking} task, where accuracy was $81.2\%$.  An IQR-based check
 on that cell flagged three participants as outliers; those three
 participants accounted for \emph{every} ranking error in the violin/box
 condition.  The other thirteen participants were at ceiling on that
-task.  Estimation accuracy was $100\%$ in all three encodings.
-Given the high ceiling and the small sample, the accuracy result
+task.  Estimation accuracy was $100\%$ in all three encodings, which
+makes that task uninformative for separating the conditions.  Given
+the high ceiling, the small sample, and the fact that the omnibus
+test does not survive a conservative correction, the accuracy result
 should be read as preliminary rather than conclusive.
 
 \begin{table}[ht]
 \centering
-\caption{Decision accuracy by encoding and task type.}
+\caption{Decision accuracy by encoding and task type ($n = 16$
+  participants, 48 trials per encoding).  Cells at 100\% reflect zero
+  errors observed in this sample on these specific tasks, not a
+  universal claim about the encoding.}
 \label{tab:accuracy}
 \rowcolors{2}{altrow}{white}
 \begin{tabular}{lcccc}
@@ -485,7 +497,9 @@ cell below ceiling.
   \includegraphics[width=\linewidth]{fig1_accuracy.png}
   \caption{Proportion correct by encoding and task type.  Error bars
     show 95\% confidence intervals.  Violin/box ranking is the only
-    condition below ceiling.}
+    condition below ceiling, and the bars at 1.0 should be read as
+    ``no errors observed in this small sample,'' not as a universal
+    accuracy claim.}
   \label{fig:accuracy}
 \end{figure}
 
@@ -713,13 +727,16 @@ HOPs were static rather than animated.
 %======================================================================
 
 On common group-comparison tasks over a clean, well-separated dataset,
-a static HOPs grid slightly outperformed both error bars and
-violin/box plots on accuracy, while error bars were numerically the
-fastest and best-calibrated encoding.  Violin/box carried a
-descriptive cost on the ranking task and on per-trial response time,
-though neither cost was large enough to survive the conservative
-statistical thresholds once sample size and ceiling effects were
-taken into account.
+a static HOPs grid produced no observed errors in this sample, while
+error bars and violin/box plots produced a small handful.  In the
+same sample, error bars were numerically the fastest and
+best-calibrated encoding, and violin/box carried a descriptive cost on
+the ranking task and on per-trial response time.  Because every
+encoding sat at or near ceiling, none of these gaps was large enough
+to survive a conservative statistical threshold once we corrected for
+multiple comparisons.  We therefore avoid framing the 100\% HOPs
+result as ``perfect accuracy,'' and read it instead as ``zero errors
+observed on these specific tasks, in this specific sample.''
 
 We present these results as pilot-scale, directional evidence rather
 than as a definitive recommendation.  They are consistent with the
