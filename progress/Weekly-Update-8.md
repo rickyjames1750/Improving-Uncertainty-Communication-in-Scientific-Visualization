@@ -52,8 +52,7 @@ of the paper stop sounding more confident than the limitations admit.
   matches what
   [`analysis/analyze_responses.py`](https://github.com/rickyjames1750/Improving-Uncertainty-Communication-in-Scientific-Visualization/blob/main/analysis/analyze_responses.py)
   prints.  No analysis changes this week, just text.
-- Verified the final paper PDF is the version submitted under the
-  Final Research Paper link, byte-for-byte.
+- Checked that the PDF on GitHub matches what I uploaded to Canvas.
 
 ### Slides for the May 11 in-class talk
 
