@@ -56,16 +56,21 @@ of the paper stop sounding more confident than the limitations admit.
 
 ### Slides for the May 11 in-class talk
 
-The pre-recorded video (submitted Apr 21) and the
-[`presentation/CSCI 693 - Keynote.pdf`](https://github.com/rickyjames1750/Improving-Uncertainty-Communication-in-Scientific-Visualization/blob/main/presentation/CSCI%20693%20-%20Keynote.pdf)
-on GitHub still use the older, more confident wording that Shelley
-flagged ("HOPs: perfect accuracy on all 3 task types," "HOPs grid
-produced perfect accuracy" on the Key Takeaways slide).  Plan for next
-week is to swap those exact strings on Slides 12, 13, and 15 to match
-the paper's new framing ("100% in this sample, zero errors observed,"
-"ceiling effect: see paper §4.1") and re-export the deck before the
-in-class presentation.  I will use the revised deck for the in-class
-talk on May 11, even though the pre-recorded video stays as it is.
+I went ahead and got the slide rewording done this week instead of
+waiting.  The Decision Accuracy, Accuracy by Task Type, and Key
+Takeaways slides now match the paper's softer framing ("100% in this
+sample, zero errors observed," "ceiling caveat: see paper §4.1"), and
+the bottom-line callout ends with "replication needed before any
+general recommendation."  The pre-recorded video (submitted Apr 21)
+still uses the older wording.  I will use the revised deck for the
+in-class talk on May 11.
+
+Updated deck:
+
+- [`presentation/CSCI 693 - Keynote.pdf`](https://github.com/rickyjames1750/Improving-Uncertainty-Communication-in-Scientific-Visualization/blob/main/presentation/CSCI%20693%20-%20Keynote.pdf)
+  on GitHub.
+- [Live Google Slides version](https://docs.google.com/presentation/d/17vPgZJQIMcdLnaG3eE-rh-1SFHI6MwJvo1KiB30WfS8/edit?usp=sharing)
+  for in-class projection.
 
 ## What is blocking your progress?
 
@@ -73,9 +78,6 @@ Nothing blocking.
 
 ## What is your plan for the next week?
 
-- Apply the 100%/perfect-accuracy wording fix on Slides 12, 13, and 15
-  of the Keynote deck, re-export, and push the new
-  `CSCI 693 - Keynote.pdf` to the repo.
 - Sit through Wednesday's presentations day, take notes, and watch
   for anything that sharpens the framing of my own talk.
 - Do the in-class presentation on May 11 with the updated deck.
